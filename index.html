@@ -74,6 +74,9 @@
         .tab-content { display: none; }
         .tab-content.active { display: block; animation: fadeIn 0.4s ease-in-out; }
         
+        /* Admin Controls */
+        body:not(.admin-mode) .admin-actions { display: none !important; }
+        
         /* General Utilities */
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         .clamp-text { display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden; }
@@ -244,7 +247,7 @@
     <script type="module">
         // Import exact SDK versions requested
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-app.js";
-        import { getFirestore, collection, addDoc, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, onSnapshot, serverTimestamp, doc, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-firestore.js";
 
         // User's EXACT provided configuration
         const firebaseConfig = {
@@ -264,6 +267,8 @@
         // Application State
         let isAdmin = false;
         let postsUnsubscribe = null;
+        let editingPostId = null;
+        let currentPosts = [];
 
         // DOM Elements References
         const els = {
@@ -341,6 +346,7 @@
                         return timeB - timeA; // Descending
                     });
 
+                    currentPosts = posts;
                     renderPosts(posts);
                 }, (error) => {
                     console.error("Firestore Error:", error);
@@ -387,6 +393,14 @@
 
                 html += `<div class="post-text text-gray-700 leading-relaxed clamp-text">${formattedContent}</div>`;
                 
+                // Admin Edit & Delete buttons
+                html += `
+                    <div class="admin-actions mt-5 pt-4 border-t border-gray-100 flex gap-3 justify-end">
+                        <button class="btn-edit text-sm text-blue-600 hover:text-blue-800 font-medium px-3 py-1.5 rounded border border-blue-200 hover:bg-blue-50 transition flex items-center" data-id="${post.id}"><i class="fas fa-edit mr-2"></i> Edit</button>
+                        <button class="btn-delete text-sm text-red-600 hover:text-red-800 font-medium px-3 py-1.5 rounded border border-red-200 hover:bg-red-50 transition flex items-center" data-id="${post.id}"><i class="fas fa-trash-alt mr-2"></i> Delete</button>
+                    </div>
+                `;
+
                 article.innerHTML = html;
 
                 // Add "Read More" button logic if text is long
@@ -415,6 +429,54 @@
             });
         }
 
+        // Handle Edit and Delete actions
+        els.postsContainer.addEventListener('click', async (e) => {
+            if (!isAdmin) return;
+            
+            const editBtn = e.target.closest('.btn-edit');
+            const delBtn = e.target.closest('.btn-delete');
+            
+            if (delBtn) {
+                const id = delBtn.getAttribute('data-id');
+                if (confirm('Are you sure you want to delete this post? This action cannot be undone.')) {
+                    try {
+                        await deleteDoc(doc(db, 'posts', id));
+                        showToast('Post deleted successfully.', 'success');
+                        
+                        // Clear edit mode if they delete the post they are currently editing
+                        if (editingPostId === id) {
+                            resetCMSForm();
+                        }
+                    } catch (err) {
+                        console.error("Delete error:", err);
+                        showToast('Error deleting post.', 'error');
+                    }
+                }
+            }
+            
+            if (editBtn) {
+                const id = editBtn.getAttribute('data-id');
+                const post = currentPosts.find(p => p.id === id);
+                if (post) {
+                    document.getElementById('post-heading').value = post.title || '';
+                    document.getElementById('post-body').value = post.content || '';
+                    editingPostId = id;
+                    document.getElementById('btn-submit-post').innerHTML = '<i class="fas fa-save mr-2"></i>Update Post';
+                    
+                    els.cmsPanel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    showToast('Editing post. Leave image blank to keep current image.', 'info');
+                }
+            }
+        });
+
+        function resetCMSForm() {
+            document.getElementById('post-heading').value = '';
+            document.getElementById('post-body').value = '';
+            document.getElementById('post-image').value = '';
+            editingPostId = null;
+            document.getElementById('btn-submit-post').textContent = 'Publish Post';
+        }
+
         // CMS Submit Post
         document.getElementById('btn-submit-post').addEventListener('click', async () => {
             if (!isAdmin) return;
@@ -433,39 +495,51 @@
             }
 
             btn.disabled = true; 
-            btn.innerHTML = '<i class="fas fa-circle-notch fa-spin mr-2"></i>Publishing...';
+            btn.innerHTML = '<i class="fas fa-circle-notch fa-spin mr-2"></i>' + (editingPostId ? 'Updating...' : 'Publishing...');
             
             try {
                 let imageBase64 = null;
                 if (fileInput.files && fileInput.files[0]) {
                     const file = fileInput.files[0];
-                    if(file.size > 1048576) { // 1MB limit for firestore doc size
+                    if(file.size > 1048576) {
                         showToast("Image too large. Please use an image under 1MB.", "error");
                         btn.disabled = false;
-                        btn.textContent = 'Publish Post';
+                        btn.innerHTML = editingPostId ? '<i class="fas fa-save mr-2"></i>Update Post' : 'Publish Post';
                         return;
                     }
                     imageBase64 = await toBase64(file);
                 }
 
-                await addDoc(collection(db, 'posts'), {
+                const postData = {
                     title,
-                    content,
-                    imageBase64,
-                    timestamp: serverTimestamp()
-                });
+                    content
+                };
+
+                // Only attach image if a new one was uploaded
+                if (imageBase64) {
+                    postData.imageBase64 = imageBase64;
+                }
+
+                if (editingPostId) {
+                    // Update existing document
+                    await updateDoc(doc(db, 'posts', editingPostId), postData);
+                    showToast("Post updated successfully!", "success");
+                } else {
+                    // Create new document
+                    postData.timestamp = serverTimestamp();
+                    await addDoc(collection(db, 'posts'), postData);
+                    showToast("Post published successfully!", "success");
+                }
                 
-                // Reset form
-                titleInput.value = '';
-                bodyInput.value = '';
-                fileInput.value = '';
-                showToast("Post published successfully!", "success");
+                resetCMSForm();
             } catch (err) {
-                console.error("Publishing error:", err);
-                showToast("Failed to publish post.", "error");
+                console.error("Publishing/Updating error:", err);
+                showToast("Failed to save post.", "error");
             } finally {
                 btn.disabled = false; 
-                btn.textContent = 'Publish Post';
+                if (!editingPostId) {
+                    btn.textContent = 'Publish Post';
+                }
             }
         });
 
@@ -514,6 +588,7 @@
 
             if (valid1 || valid2) {
                 isAdmin = true;
+                document.body.classList.add('admin-mode');
                 closeModal();
                 
                 els.btnOpenLogin.classList.add('hidden');
@@ -536,6 +611,9 @@
 
         els.btnLogout.addEventListener('click', () => {
             isAdmin = false;
+            document.body.classList.remove('admin-mode');
+            resetCMSForm();
+            
             els.btnOpenLogin.classList.remove('hidden');
             els.btnLogout.classList.add('hidden');
             els.cmsPanel.classList.add('hidden');
