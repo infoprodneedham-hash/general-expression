@@ -1,35 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
-
-npm install firebase
-
-// Import the functions you need from the SDKs you need
-import { initializeApp } from "firebase/app";
-import { getAnalytics } from "firebase/analytics";
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
-
-// Your web app's Firebase configuration
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
-const firebaseConfig = {
-  apiKey: "AIzaSyAYlaP5EXWeafNUAwR0icxQyWOHUFpHp_s",
-  authDomain: "blog-posts-d4c89.firebaseapp.com",
-  projectId: "blog-posts-d4c89",
-  storageBucket: "blog-posts-d4c89.firebasestorage.app",
-  messagingSenderId: "1002364330609",
-  appId: "1:1002364330609:web:3053bb7fadc93ce3d9f1d0",
-  measurementId: "G-685Q5LC2DC"
-};
-
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>University Academic Portal</title>
+    
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;0,700;1,400&family=Open+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
     
     <script>
@@ -53,10 +33,8 @@ const analytics = getAnalytics(app);
     
     <style>
         body { background-color: #F9F8F6; scroll-behavior: smooth; }
-        .hero-bg {
-            background-image: linear-gradient(rgba(0, 40, 85, 0.75), rgba(0, 40, 85, 0.85)), url('https://images.unsplash.com/photo-1507842217343-583bb7270b66?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80');
-            background-size: cover; background-position: center;
-        }
+        
+        /* Social Sidebar Styles */
         .social-sidebar {
             position: fixed; left: 0; top: 50%; transform: translateY(-50%);
             display: flex; flex-direction: column; background: white;
@@ -84,14 +62,22 @@ const analytics = getAnalytics(app);
             body { padding-bottom: 50px; }
         }
 
+        /* Toast Notifications */
         .toast {
             position: fixed; bottom: 80px; right: 20px; transform: translateX(120%);
             opacity: 0; transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55); z-index: 100;
         }
         .toast.show { transform: translateX(0); opacity: 1; }
+        
+        /* Tab Styles */
         .nav-link.active { color: #C5A059; border-bottom: 2px solid #C5A059; }
-        .animate-fade-in { animation: fadeIn 0.4s ease-in-out; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; animation: fadeIn 0.4s ease-in-out; }
+        
+        /* General Utilities */
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .clamp-text { display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden; }
+        .post-image-preview { max-height: 400px; object-fit: cover; width: 100%; border-radius: 0.5rem; margin-bottom: 1rem; }
     </style>
 </head>
 <body class="text-gray-800 antialiased font-sans flex flex-col min-h-screen">
@@ -111,7 +97,7 @@ const analytics = getAnalytics(app);
                 </nav>
 
                 <div class="flex items-center">
-                    <button id="btn-login-open" class="text-xs sm:text-sm font-medium text-gray-300 hover:text-white transition px-3 py-1.5 rounded border border-gray-600">Admin</button>
+                    <button id="btn-login-open" class="text-xs sm:text-sm font-medium text-gray-300 hover:text-white transition px-3 py-1.5 rounded border border-gray-600">Admin Login</button>
                     <button id="btn-logout" class="hidden text-xs sm:text-sm font-medium text-edu-gold hover:text-white transition px-3 py-1.5">Logout</button>
                 </div>
             </div>
@@ -119,388 +105,481 @@ const analytics = getAnalytics(app);
     </header>
 
     <div class="social-sidebar">
-        <div data-share="facebook" class="social-btn fb"><i class="fab fa-facebook-f"></i></div>
+        <div data-share="facebook" class="social-btn fb" title="Share on Facebook"><i class="fab fa-facebook-f"></i></div>
         <div data-share="x" class="social-btn tw" title="Share on X">
+            <!-- Official X Logo SVG -->
             <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                 <path d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932ZM17.61 20.644h2.039L6.486 3.24H4.298Z"/>
             </svg>
         </div>
-        <div data-share="linkedin" class="social-btn li"><i class="fab fa-linkedin-in"></i></div>
-        <div data-share="email" class="social-btn em"><i class="fas fa-envelope"></i></div>
+        <div data-share="linkedin" class="social-btn li" title="Share on LinkedIn"><i class="fab fa-linkedin-in"></i></div>
+        <div data-share="email" class="social-btn em" title="Share via Email"><i class="fas fa-envelope"></i></div>
     </div>
 
-    <div class="hero-bg py-16 sm:py-24 relative">
-        <div class="max-w-4xl mx-auto px-4 text-center relative z-10">
-            <h1 class="text-3xl sm:text-5xl font-serif font-bold text-white mb-4 drop-shadow-md">
-                Knowledge & <span class="text-edu-gold">Tradition</span>
-            </h1>
-            <p class="text-base sm:text-lg text-gray-200 max-w-2xl mx-auto font-light">
-                Welcome to our digital repository. Stay informed with the latest updates from our historic institution.
-            </p>
+    <div class="bg-edu-navy overflow-hidden relative shadow-inner">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 flex flex-col md:flex-row items-center justify-between py-12 md:py-16 gap-8">
+            <div class="text-center md:text-left md:w-3/5 z-10 relative">
+                <h1 class="text-3xl sm:text-4xl md:text-5xl font-serif font-bold text-white mb-4 leading-tight">
+                    Preserving Knowledge, <br><span class="text-edu-gold">Inspiring the Future.</span>
+                </h1>
+                <p class="text-base sm:text-lg text-gray-300 font-light max-w-lg mx-auto md:mx-0">
+                    Welcome to the official repository. Stay informed with the latest updates, academic achievements, and historical insights from our institution.
+                </p>
+            </div>
+            <div class="md:w-2/5 relative z-10">
+                <!-- Modestly sized historic library side image -->
+                <img src="https://images.unsplash.com/photo-1507842217343-583bb7270b66?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Historic Library" class="rounded-xl shadow-2xl border-4 border-edu-gold/30 max-h-64 object-cover w-full">
+            </div>
+            <!-- Decorative background element -->
+            <div class="absolute right-0 top-0 w-64 h-64 bg-edu-crimson rounded-full mix-blend-multiply filter blur-3xl opacity-20 transform translate-x-1/2 -translate-y-1/2"></div>
         </div>
     </div>
 
     <main class="flex-grow w-full max-w-4xl mx-auto px-4 sm:px-6 py-10 relative">
         
-        <!-- TAB 1: Posts -->
-        <div id="tab-home" class="tab-content block">
+        <!-- TAB 1: Posts (Default) -->
+        <div id="tab-home" class="tab-content active">
             
-            <!-- CMS Panel (Hidden by Default) -->
-            <div id="cms-panel" class="hidden mb-10 bg-white p-6 rounded-lg shadow-sm border border-gray-200 border-t-4 border-t-edu-crimson">
+            <!-- Admin CMS Panel -->
+            <div id="cms-panel" class="hidden mb-10 bg-white p-6 rounded-lg shadow-md border border-gray-200 border-t-4 border-t-edu-crimson">
                 <h2 class="text-xl font-serif font-bold text-edu-navy mb-4"><i class="fas fa-pen-nib mr-2"></i>Create New Post</h2>
                 <div class="space-y-4">
-                    <input type="text" id="post-heading" class="w-full px-4 py-2 border border-gray-300 rounded focus:ring-1 focus:ring-edu-navy outline-none" placeholder="Post Heading...">
-                    <textarea id="post-body" rows="4" class="w-full px-4 py-2 border border-gray-300 rounded focus:ring-1 focus:ring-edu-navy outline-none" placeholder="Write your full content here..."></textarea>
-                    <div class="flex justify-end">
-                        <button id="btn-submit-post" class="bg-edu-navy hover:bg-blue-900 text-white font-medium py-2 px-6 rounded shadow transition">Publish</button>
+                    <input type="text" id="post-heading" class="w-full px-4 py-3 border border-gray-300 rounded focus:ring-2 focus:ring-edu-navy outline-none font-semibold text-lg" placeholder="Post Title...">
+                    
+                    <textarea id="post-body" rows="6" class="w-full px-4 py-3 border border-gray-300 rounded focus:ring-2 focus:ring-edu-navy outline-none" placeholder="Write your full content here..."></textarea>
+                    
+                    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-t pt-4">
+                        <div class="w-full sm:w-auto flex-grow">
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Attach Image</label>
+                            <input type="file" id="post-image" accept="image/*" class="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-semibold file:bg-edu-bg file:text-edu-navy hover:file:bg-gray-200 transition">
+                        </div>
+                        <button id="btn-submit-post" class="w-full sm:w-auto bg-edu-navy hover:bg-blue-900 text-white font-medium py-2.5 px-8 rounded shadow transition whitespace-nowrap">Publish Post</button>
                     </div>
                 </div>
             </div>
 
-            <!-- Posts Feed -->
+            <!-- Posts Feed Section -->
             <div class="flex justify-between items-end mb-6 border-b border-gray-200 pb-2">
-                <h2 class="text-2xl font-serif font-bold text-edu-navy">Latest Posts</h2>
-                <div id="loading-spinner" class="text-edu-gold"><i class="fas fa-circle-notch fa-spin text-xl"></i></div>
+                <h2 class="text-2xl font-serif font-bold text-edu-navy">Latest Updates</h2>
+                <div id="loading-spinner" class="text-edu-gold flex items-center gap-2">
+                    <i class="fas fa-circle-notch fa-spin text-xl"></i>
+                    <span class="text-sm font-medium">Loading...</span>
+                </div>
             </div>
             
-            <div id="posts-container" class="space-y-6"></div>
+            <div id="posts-container" class="space-y-8">
+                <!-- Posts will be injected here dynamically -->
+            </div>
             
-            <div id="empty-state" class="hidden text-center py-12 bg-white rounded border border-gray-200 border-dashed">
-                <p class="text-gray-500 font-medium">No posts have been published yet.</p>
+            <div id="empty-state" class="hidden text-center py-16 bg-white rounded-lg border border-gray-200 border-dashed shadow-sm">
+                <i class="fas fa-book-open text-4xl text-gray-300 mb-3"></i>
+                <p class="text-gray-500 font-medium text-lg">No posts have been published yet.</p>
             </div>
         </div>
 
         <!-- TAB 2: Information -->
-        <div id="tab-info" class="tab-content hidden animate-fade-in">
+        <div id="tab-info" class="tab-content">
             <div class="bg-white p-6 sm:p-8 rounded-lg shadow-sm border border-gray-200">
-                <h2 class="text-2xl font-serif font-bold text-edu-navy mb-4">About the University</h2>
-                <div class="text-gray-700 space-y-4 leading-relaxed">
-                    <p>Founded on the principles of rigorous inquiry and intellectual freedom, our university has stood as a beacon of knowledge for over a century. We are committed to nurturing the minds of future leaders and contributing to the global body of research.</p>
-                    <p>The historic library houses rare manuscripts and early printed books that attract scholars from around the world. We pride ourselves on maintaining these critical artifacts for the public good.</p>
-                    <h3 class="text-lg font-bold text-edu-navy pt-2">Our Mission</h3>
-                    <ul class="list-disc pl-5 space-y-1">
-                        <li>Advance knowledge through impactful research.</li>
-                        <li>Provide a transformative educational experience.</li>
-                        <li>Serve communities through outreach and partnership.</li>
+                <h2 class="text-2xl font-serif font-bold text-edu-navy mb-4 border-b pb-2">About the University</h2>
+                <div class="text-gray-700 space-y-4 leading-relaxed mt-4">
+                    <p>Founded on the principles of rigorous inquiry and intellectual freedom, our university has stood as a beacon of knowledge for generations. We are committed to nurturing the minds of future leaders and contributing to the global body of research.</p>
+                    <p>The historic library houses rare manuscripts and early printed books that attract scholars from around the world. We pride ourselves on maintaining these critical artifacts for the public good, ensuring that the lessons of the past continue to enlighten the future.</p>
+                    <h3 class="text-xl font-serif font-bold text-edu-navy pt-4">Our Core Mission</h3>
+                    <ul class="list-none space-y-2">
+                        <li class="flex items-center gap-2"><i class="fas fa-check text-edu-gold"></i> Advance knowledge through impactful research.</li>
+                        <li class="flex items-center gap-2"><i class="fas fa-check text-edu-gold"></i> Provide a transformative educational experience.</li>
+                        <li class="flex items-center gap-2"><i class="fas fa-check text-edu-gold"></i> Serve communities through global outreach and partnership.</li>
                     </ul>
                 </div>
             </div>
         </div>
 
         <!-- TAB 3: Feedback -->
-        <div id="tab-feedback" class="tab-content hidden animate-fade-in">
+        <div id="tab-feedback" class="tab-content">
             <div class="bg-white p-6 sm:p-8 rounded-lg shadow-sm border border-gray-200 max-w-2xl mx-auto">
                 <h2 class="text-2xl font-serif font-bold text-edu-navy mb-2">Submit Feedback</h2>
                 <p class="text-gray-600 mb-6 text-sm">We value your input. Your messages are sent directly to the administration.</p>
                 <form id="feedback-form" class="space-y-4">
-                    <input type="text" id="fb-name" required placeholder="Full Name" class="w-full px-4 py-2 border border-gray-300 rounded focus:ring-1 focus:ring-edu-navy outline-none">
-                    <input type="email" id="fb-email" required placeholder="Email Address" class="w-full px-4 py-2 border border-gray-300 rounded focus:ring-1 focus:ring-edu-navy outline-none">
-                    <textarea id="fb-message" required rows="4" placeholder="Your Message" class="w-full px-4 py-2 border border-gray-300 rounded focus:ring-1 focus:ring-edu-navy outline-none"></textarea>
-                    <button type="submit" id="btn-submit-fb" class="w-full bg-edu-crimson hover:bg-red-900 text-white font-medium py-2.5 rounded shadow transition">Send Feedback</button>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <input type="text" id="fb-name" required placeholder="Full Name" class="w-full px-4 py-2 border border-gray-300 rounded focus:ring-1 focus:ring-edu-navy outline-none">
+                        <input type="email" id="fb-email" required placeholder="Email Address" class="w-full px-4 py-2 border border-gray-300 rounded focus:ring-1 focus:ring-edu-navy outline-none">
+                    </div>
+                    <textarea id="fb-message" required rows="5" placeholder="Your Message" class="w-full px-4 py-2 border border-gray-300 rounded focus:ring-1 focus:ring-edu-navy outline-none"></textarea>
+                    <button type="submit" id="btn-submit-fb" class="w-full bg-edu-crimson hover:bg-red-900 text-white font-medium py-3 rounded shadow transition text-lg">Send Feedback</button>
                 </form>
             </div>
         </div>
     </main>
 
-    <!-- Admin Login Modal -->
-    <div id="login-modal" class="fixed inset-0 bg-edu-navy/90 backdrop-blur-sm z-[100] hidden flex items-center justify-center p-4">
-        <div class="bg-white rounded-lg shadow-xl max-w-sm w-full overflow-hidden">
-            <div class="bg-edu-navy px-5 py-3 flex justify-between items-center text-white">
-                <h3 class="font-serif font-semibold">Admin Access</h3>
-                <button id="btn-close-modal" class="hover:text-edu-gold transition"><i class="fas fa-times"></i></button>
+    <div id="login-modal" class="fixed inset-0 bg-edu-navy/90 backdrop-blur-sm z-[100] hidden flex items-center justify-center p-4 opacity-0 transition-opacity duration-300">
+        <div class="bg-white rounded-lg shadow-2xl max-w-sm w-full overflow-hidden transform scale-95 transition-transform duration-300" id="login-modal-content">
+            <div class="bg-edu-navy px-5 py-4 flex justify-between items-center text-white border-b border-edu-gold/30">
+                <h3 class="font-serif font-semibold text-lg"><i class="fas fa-lock mr-2 text-edu-gold"></i> Admin Access</h3>
+                <button id="btn-close-modal" class="text-gray-300 hover:text-white transition"><i class="fas fa-times text-xl"></i></button>
             </div>
-            <div class="p-5">
-                <div id="login-error" class="hidden text-red-600 text-sm mb-3 font-medium bg-red-50 p-2 rounded">Invalid credentials.</div>
-                <div class="space-y-3">
-                    <input type="text" id="username" placeholder="Username" class="w-full px-3 py-2 border rounded focus:ring-1 focus:ring-edu-navy outline-none">
-                    <input type="password" id="password" placeholder="Access Code" class="w-full px-3 py-2 border rounded focus:ring-1 focus:ring-edu-navy outline-none">
-                    <button id="btn-submit-login" class="w-full bg-edu-gold hover:bg-yellow-600 text-edu-navy font-bold py-2 rounded transition mt-2">Login</button>
+            <div class="p-6">
+                <div id="login-error" class="hidden text-red-600 text-sm mb-4 font-medium bg-red-50 p-3 rounded flex items-center gap-2">
+                    <i class="fas fa-exclamation-circle"></i> Invalid credentials.
+                </div>
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">Username</label>
+                        <input type="text" id="username" class="w-full px-4 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-edu-navy outline-none transition">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">Access Code</label>
+                        <input type="password" id="password" class="w-full px-4 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-edu-navy outline-none transition">
+                    </div>
+                    <button id="btn-submit-login" class="w-full bg-edu-gold hover:bg-yellow-600 text-edu-navy font-bold py-3 rounded shadow transition mt-4">Login to CMS</button>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Notification Toast -->
-    <div id="toast" class="toast bg-gray-900 text-white px-4 py-3 rounded shadow-lg flex items-center gap-3 border-l-4 border-edu-gold">
-        <i id="toast-icon" class="fas fa-info-circle text-edu-gold"></i>
-        <span id="toast-message" class="text-sm font-medium">Notification</span>
+    <div id="toast" class="toast bg-gray-900 text-white px-5 py-4 rounded shadow-2xl flex items-center gap-3 border-l-4 border-edu-gold">
+        <i id="toast-icon" class="fas fa-info-circle text-edu-gold text-xl"></i>
+        <span id="toast-message" class="text-sm font-medium">Notification message here</span>
     </div>
 
     <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, collection, addDoc, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        // Import exact SDK versions requested
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-app.js";
+        import { getFirestore, collection, addDoc, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-firestore.js";
 
-        document.addEventListener('DOMContentLoaded', () => {
+        // User's EXACT provided configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyAYlaP5EXWeafNUAwR0icxQyWOHUFpHp_s",
+            authDomain: "blog-posts-d4c89.firebaseapp.com",
+            projectId: "blog-posts-d4c89",
+            storageBucket: "blog-posts-d4c89.firebasestorage.app",
+            messagingSenderId: "1002364330609",
+            appId: "1:1002364330609:web:3053bb7fadc93ce3d9f1d0",
+            measurementId: "G-685Q5LC2DC"
+        };
+
+        // Initialize App and Database
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // Application State
+        let isAdmin = false;
+        let postsUnsubscribe = null;
+
+        // DOM Elements References
+        const els = {
+            postsContainer: document.getElementById('posts-container'),
+            loadingSpinner: document.getElementById('loading-spinner'),
+            emptyState: document.getElementById('empty-state'),
+            cmsPanel: document.getElementById('cms-panel'),
+            loginModal: document.getElementById('login-modal'),
+            modalContent: document.getElementById('login-modal-content'),
+            btnOpenLogin: document.getElementById('btn-login-open'),
+            btnLogout: document.getElementById('btn-logout'),
+            navLinks: document.querySelectorAll('.nav-link'),
+            tabContents: document.querySelectorAll('.tab-content')
+        };
+
+        // UI Helpers
+        let toastTimer;
+        function showToast(msg, type = 'info') {
+            const t = document.getElementById('toast');
+            document.getElementById('toast-message').textContent = msg;
             
-            // Environment Variables
-            const appId = typeof __app_id !== 'undefined' ? __app_id : 'university-portal';
-            let firebaseConfig = {};
-            if (typeof __firebase_config !== 'undefined') {
-                try { firebaseConfig = JSON.parse(__firebase_config); } catch (e) {}
-            }
+            // Configure colors based on type
+            t.className = `toast px-5 py-4 rounded shadow-2xl flex items-center gap-3 border-l-4 text-white bg-gray-900 ${
+                type === 'success' ? 'border-green-500' : 
+                type === 'error' ? 'border-red-500' : 'border-edu-gold'
+            }`;
             
-            // State
-            let app, auth, db, currentUser = null, isAdmin = false, allPosts = [];
-
-            // UI Elements
-            const postsContainer = document.getElementById('posts-container');
-            const loadingSpinner = document.getElementById('loading-spinner');
-            const emptyState = document.getElementById('empty-state');
-            const loginModal = document.getElementById('login-modal');
+            document.getElementById('toast-icon').className = `fas text-xl ${
+                type === 'success' ? 'fa-check-circle text-green-500' : 
+                type === 'error' ? 'fa-exclamation-triangle text-red-500' : 'fa-info-circle text-edu-gold'
+            }`;
             
-            // Helper: Toast Notifications
-            let toastTimer;
-            function showToast(msg, type) {
-                const t = document.getElementById('toast');
-                document.getElementById('toast-message').textContent = msg;
-                t.className = 'toast px-4 py-3 rounded shadow-lg flex items-center gap-3 border-l-4 text-white ' + 
-                    (type === 'success' ? 'bg-gray-900 border-green-500' : type === 'error' ? 'bg-red-900 border-red-500' : 'bg-gray-900 border-edu-gold');
-                document.getElementById('toast-icon').className = 'fas text-lg ' + 
-                    (type === 'success' ? 'fa-check-circle text-green-500' : type === 'error' ? 'fa-exclamation-circle text-red-500' : 'fa-info-circle text-edu-gold');
-                t.classList.add('show');
-                clearTimeout(toastTimer);
-                toastTimer = setTimeout(() => t.classList.remove('show'), 3000);
-            }
+            t.classList.add('show');
+            clearTimeout(toastTimer);
+            toastTimer = setTimeout(() => t.classList.remove('show'), 3500);
+        }
 
-            // Helper: Escape HTML to prevent XSS
-            function escapeHTML(str) {
-                return str.replace(/[&<>'"]/g, t => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[t]));
-            }
+        function escapeHTML(str) {
+            return str.replace(/[&<>'"]/g, tag => ({
+                '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;'
+            }[tag] || tag));
+        }
 
-            async function initializeFirebase() {
-                try {
-                    app = initializeApp(firebaseConfig);
-                    auth = getAuth(app);
-                    db = getFirestore(app);
-
-                    if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-                        await signInWithCustomToken(auth, __initial_auth_token);
-                    } else {
-                        await signInAnonymously(auth);
-                    }
-                    currentUser = auth.currentUser;
-                    setupRealtimeListener();
-                } catch (error) {
-                    console.error("Firebase init failed:", error);
-                    loadingSpinner.classList.add('hidden'); // Fix infinite spinner on failure
-                    emptyState.classList.remove('hidden');
-                    emptyState.innerHTML = '<p class="text-red-500 font-medium">Failed to connect to database.</p>';
-                    showToast("Database connection failed.", "error");
-                }
-            }
-
-            function setupRealtimeListener() {
-                if (!currentUser) return;
-                
-                const postsRef = collection(db, 'artifacts', appId, 'public', 'data', 'posts');
-                
-                onSnapshot(postsRef, (snapshot) => {
-                    loadingSpinner.classList.add('hidden'); // Guaranteed to hide on first read
-                    allPosts = [];
-                    snapshot.forEach((doc) => {
-                        allPosts.push({ id: doc.id, ...doc.data() });
-                    });
-                    
-                    // Client-side sort to avoid requiring Firestore indexes
-                    allPosts.sort((a, b) => {
-                        const tA = a.createdAt ? a.createdAt.toMillis() : 0;
-                        const tB = b.createdAt ? b.createdAt.toMillis() : 0;
-                        return tB - tA;
-                    });
-                    renderPosts();
-                }, (error) => {
-                    console.error("Firestore onSnapshot error:", error);
-                    loadingSpinner.classList.add('hidden');
-                    showToast("Error loading posts.", "error");
-                });
-            }
-
-            function renderPosts() {
-                postsContainer.innerHTML = '';
-                if (allPosts.length === 0) {
-                    emptyState.classList.remove('hidden');
-                    return;
-                }
-                emptyState.classList.add('hidden');
-                
-                allPosts.forEach(post => {
-                    const isLong = post.body.length > 300;
-                    const excerpt = isLong ? post.body.substring(0, 300) + '...' : post.body;
-                    let dateStr = "";
-                    if (post.createdAt) {
-                        dateStr = post.createdAt.toDate().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-                    }
-
-                    const article = document.createElement('article');
-                    article.className = 'bg-white p-5 rounded border border-gray-200 shadow-sm animate-fade-in';
-                    
-                    article.innerHTML = `
-                        <div class="mb-3">
-                            <h3 class="text-xl font-serif font-bold text-edu-navy">${escapeHTML(post.heading)}</h3>
-                            ${dateStr ? `<p class="text-xs text-edu-gold mt-1"><i class="far fa-clock mr-1"></i>${dateStr}</p>` : ''}
-                        </div>
-                        <div class="text-gray-700 text-sm leading-relaxed">
-                            <div class="excerpt-text">${escapeHTML(excerpt).replace(/\n/g, '<br>')}</div>
-                            ${isLong ? `<div class="full-text hidden">${escapeHTML(post.body).replace(/\n/g, '<br>')}</div>` : ''}
-                        </div>
-                        ${isLong ? `<button class="btn-read mt-3 text-edu-crimson text-sm font-semibold hover:underline">Read More</button>` : ''}
-                    `;
-
-                    if (isLong) {
-                        const btn = article.querySelector('.btn-read');
-                        const exc = article.querySelector('.excerpt-text');
-                        const full = article.querySelector('.full-text');
-                        btn.addEventListener('click', () => {
-                            if (full.classList.contains('hidden')) {
-                                full.classList.remove('hidden'); exc.classList.add('hidden'); btn.textContent = 'Read Less';
-                            } else {
-                                full.classList.add('hidden'); exc.classList.remove('hidden'); btn.textContent = 'Read More';
-                            }
-                        });
-                    }
-                    postsContainer.appendChild(article);
-                });
-            }
-
-            // CMS Submit Post
-            document.getElementById('btn-submit-post').addEventListener('click', async () => {
-                if (!currentUser || !isAdmin) return;
-                
-                const heading = document.getElementById('post-heading').value.trim();
-                const body = document.getElementById('post-body').value.trim();
-                const btn = document.getElementById('btn-submit-post');
-                
-                if (!heading || !body) { showToast("Missing heading or body.", "error"); return; }
-
-                btn.disabled = true; btn.textContent = 'Publishing...';
-                try {
-                    const postsRef = collection(db, 'artifacts', appId, 'public', 'data', 'posts');
-                    await addDoc(postsRef, { heading, body, createdAt: serverTimestamp() });
-                    
-                    document.getElementById('post-heading').value = '';
-                    document.getElementById('post-body').value = '';
-                    showToast("Post published securely!", "success");
-                } catch (err) {
-                    console.error("Publish error:", err);
-                    showToast("Failed to publish.", "error");
-                } finally {
-                    btn.disabled = false; btn.textContent = 'Publish';
-                }
-            });
-
-            // Feedback Submission
-            document.getElementById('feedback-form').addEventListener('submit', async (e) => {
-                e.preventDefault();
-                if (!currentUser) { showToast("Connection error.", "error"); return; }
-                
-                const name = document.getElementById('fb-name').value.trim();
-                const email = document.getElementById('fb-email').value.trim();
-                const message = document.getElementById('fb-message').value.trim();
-                const btn = document.getElementById('btn-submit-fb');
-
-                btn.disabled = true; btn.textContent = 'Sending...';
-                try {
-                    const fbRef = collection(db, 'artifacts', appId, 'public', 'data', 'feedback');
-                    await addDoc(fbRef, { name, email, message, createdAt: serverTimestamp() });
-                    
-                    e.target.reset();
-                    showToast("Feedback sent directly to administration.", "success");
-                } catch(err) {
-                    console.error("Feedback error:", err);
-                    showToast("Failed to submit feedback.", "error");
-                } finally {
-                    btn.disabled = false; btn.textContent = 'Send Feedback';
-                }
-            });
-
-            // Admin Login Logic
-            document.getElementById('btn-login-open').addEventListener('click', () => {
-                loginModal.classList.remove('hidden');
-            });
-            
-            document.getElementById('btn-close-modal').addEventListener('click', () => {
-                loginModal.classList.add('hidden');
-                document.getElementById('login-error').classList.add('hidden');
-            });
-
-            document.getElementById('btn-submit-login').addEventListener('click', () => {
-                const u = document.getElementById('username').value.trim();
-                const p = document.getElementById('password').value.trim();
-                
-                // Specific requested credentials
-                const valid1 = (u === 'lneedham' && p === '09111941');
-                const valid2 = (u === 'dneedham' && p === '28041973');
-
-                if (valid1 || valid2) {
-                    isAdmin = true;
-                    loginModal.classList.add('hidden');
-                    document.getElementById('btn-login-open').classList.add('hidden');
-                    document.getElementById('btn-logout').classList.remove('hidden');
-                    document.getElementById('cms-panel').classList.remove('hidden');
-                    
-                    // Reset fields
-                    document.getElementById('username').value = '';
-                    document.getElementById('password').value = '';
-                    document.getElementById('login-error').classList.add('hidden');
-                    
-                    showToast("Admin access granted.", "success");
-                    
-                    // Switch to posts tab automatically upon login
-                    document.querySelectorAll('.nav-link').forEach(el => el.classList.remove('active'));
-                    document.querySelector('[data-tab="home"]').classList.add('active');
-                    document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
-                    document.getElementById('tab-home').classList.remove('hidden');
-                } else {
-                    document.getElementById('login-error').classList.remove('hidden');
-                }
-            });
-
-            document.getElementById('btn-logout').addEventListener('click', () => {
-                isAdmin = false;
-                document.getElementById('btn-login-open').classList.remove('hidden');
-                document.getElementById('btn-logout').classList.add('hidden');
-                document.getElementById('cms-panel').classList.add('hidden');
-                showToast("Logged out successfully.", "info");
-            });
-
-            // Navigation Tabs Logic
-            document.querySelectorAll('.nav-link').forEach(btn => {
-                btn.addEventListener('click', (e) => {
-                    const tabId = e.target.getAttribute('data-tab');
-                    document.querySelectorAll('.nav-link').forEach(el => el.classList.remove('active'));
-                    e.target.classList.add('active');
-                    
-                    document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
-                    document.getElementById('tab-' + tabId).classList.remove('hidden');
-                });
-            });
-
-            // Social Sharing Logic
-            document.querySelectorAll('.social-btn').forEach(btn => {
-                btn.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    const platform = e.currentTarget.getAttribute('data-share');
-                    const url = encodeURIComponent(window.location.href);
-                    const text = encodeURIComponent("Check out the University Portal.");
-                    let sUrl = '';
-                    
-                    if(platform === 'facebook') sUrl = `https://www.facebook.com/sharer/sharer.php?u=${url}`;
-                    if(platform === 'x') sUrl = `https://twitter.com/intent/tweet?url=${url}&text=${text}`;
-                    if(platform === 'linkedin') sUrl = `https://www.linkedin.com/shareArticle?mini=true&url=${url}`;
-                    if(platform === 'email') { 
-                        window.location.href = `mailto:?subject=${text}&body=${url}`; 
-                        return; 
-                    }
-                    if (sUrl) {
-                        window.open(sUrl, '_blank', 'width=600,height=400');
-                    }
-                });
-            });
-
-            // Kickoff Initialization
-            initializeFirebase();
+        // Convert selected image file to Base64 string
+        const toBase64 = file => new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = () => resolve(reader.result);
+            reader.onerror = error => reject(error);
         });
+
+        function setupRealtimeListener() {
+            // Using the root 'posts' collection for the user's specific project database
+            const postsRef = collection(db, 'posts');
+            
+            try {
+                postsUnsubscribe = onSnapshot(postsRef, (snapshot) => {
+                    els.loadingSpinner.classList.add('hidden');
+                    
+                    if (snapshot.empty) {
+                        els.postsContainer.innerHTML = '';
+                        els.emptyState.classList.remove('hidden');
+                        return;
+                    }
+                    
+                    els.emptyState.classList.add('hidden');
+                    
+                    // Convert to array and sort locally to avoid missing index errors in Firestore
+                    let posts = [];
+                    snapshot.forEach(doc => posts.push({ id: doc.id, ...doc.data() }));
+                    
+                    posts.sort((a, b) => {
+                        const timeA = a.timestamp ? a.timestamp.toMillis() : 0;
+                        const timeB = b.timestamp ? b.timestamp.toMillis() : 0;
+                        return timeB - timeA; // Descending
+                    });
+
+                    renderPosts(posts);
+                }, (error) => {
+                    console.error("Firestore Error:", error);
+                    els.loadingSpinner.classList.add('hidden');
+                    els.emptyState.classList.remove('hidden');
+                    els.emptyState.innerHTML = '<i class="fas fa-exclamation-triangle text-4xl text-red-300 mb-3"></i><p class="text-red-500">Could not load posts. Please check database permissions.</p>';
+                    showToast("Database connection failed.", "error");
+                });
+            } catch (err) {
+                console.error("Setup error:", err);
+                els.loadingSpinner.classList.add('hidden');
+            }
+        }
+
+        function renderPosts(posts) {
+            els.postsContainer.innerHTML = '';
+            
+            posts.forEach(post => {
+                const article = document.createElement('article');
+                article.className = 'bg-white p-6 sm:p-8 rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition duration-300';
+                
+                let dateStr = "";
+                if (post.timestamp) {
+                    dateStr = post.timestamp.toDate().toLocaleDateString('en-US', { 
+                        weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' 
+                    });
+                }
+
+                const safeTitle = escapeHTML(post.title || "Untitled Post");
+                const safeContent = escapeHTML(post.content || "");
+                const formattedContent = safeContent.replace(/\n/g, '<br>');
+                
+                // Construct inner HTML
+                let html = `
+                    <header class="mb-4">
+                        <h3 class="text-2xl font-serif font-bold text-edu-navy leading-tight">${safeTitle}</h3>
+                        ${dateStr ? `<p class="text-sm text-gray-500 mt-2 font-medium"><i class="far fa-calendar-alt mr-1"></i> ${dateStr}</p>` : ''}
+                    </header>
+                `;
+
+                if (post.imageBase64) {
+                    html += `<img src="${post.imageBase64}" alt="Post image" class="post-image-preview shadow-sm">`;
+                }
+
+                html += `<div class="post-text text-gray-700 leading-relaxed clamp-text">${formattedContent}</div>`;
+                
+                article.innerHTML = html;
+
+                // Add "Read More" button logic if text is long
+                els.postsContainer.appendChild(article);
+                
+                // Wait for render to check height
+                setTimeout(() => {
+                    const textDiv = article.querySelector('.post-text');
+                    if (textDiv.scrollHeight > textDiv.clientHeight) {
+                        const btn = document.createElement('button');
+                        btn.className = 'mt-4 text-edu-crimson font-semibold hover:text-red-900 transition flex items-center gap-1';
+                        btn.innerHTML = 'Read More <i class="fas fa-chevron-down text-xs"></i>';
+                        
+                        btn.onclick = () => {
+                            if (textDiv.classList.contains('clamp-text')) {
+                                textDiv.classList.remove('clamp-text');
+                                btn.innerHTML = 'Read Less <i class="fas fa-chevron-up text-xs"></i>';
+                            } else {
+                                textDiv.classList.add('clamp-text');
+                                btn.innerHTML = 'Read More <i class="fas fa-chevron-down text-xs"></i>';
+                            }
+                        };
+                        article.appendChild(btn);
+                    }
+                }, 10);
+            });
+        }
+
+        // CMS Submit Post
+        document.getElementById('btn-submit-post').addEventListener('click', async () => {
+            if (!isAdmin) return;
+            
+            const titleInput = document.getElementById('post-heading');
+            const bodyInput = document.getElementById('post-body');
+            const fileInput = document.getElementById('post-image');
+            const btn = document.getElementById('btn-submit-post');
+            
+            const title = titleInput.value.trim();
+            const content = bodyInput.value.trim();
+            
+            if (!title || !content) { 
+                showToast("Please provide both a title and content.", "error"); 
+                return; 
+            }
+
+            btn.disabled = true; 
+            btn.innerHTML = '<i class="fas fa-circle-notch fa-spin mr-2"></i>Publishing...';
+            
+            try {
+                let imageBase64 = null;
+                if (fileInput.files && fileInput.files[0]) {
+                    const file = fileInput.files[0];
+                    if(file.size > 1048576) { // 1MB limit for firestore doc size
+                        showToast("Image too large. Please use an image under 1MB.", "error");
+                        btn.disabled = false;
+                        btn.textContent = 'Publish Post';
+                        return;
+                    }
+                    imageBase64 = await toBase64(file);
+                }
+
+                await addDoc(collection(db, 'posts'), {
+                    title,
+                    content,
+                    imageBase64,
+                    timestamp: serverTimestamp()
+                });
+                
+                // Reset form
+                titleInput.value = '';
+                bodyInput.value = '';
+                fileInput.value = '';
+                showToast("Post published successfully!", "success");
+            } catch (err) {
+                console.error("Publishing error:", err);
+                showToast("Failed to publish post.", "error");
+            } finally {
+                btn.disabled = false; 
+                btn.textContent = 'Publish Post';
+            }
+        });
+
+        // Tab Navigation
+        els.navLinks.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const tabId = e.target.getAttribute('data-tab');
+                
+                els.navLinks.forEach(el => el.classList.remove('active'));
+                e.target.classList.add('active');
+                
+                els.tabContents.forEach(el => el.classList.remove('active'));
+                document.getElementById('tab-' + tabId).classList.add('active');
+            });
+        });
+
+        // Authentication Logic
+        function openModal() {
+            els.loginModal.classList.remove('hidden');
+            // Small delay to allow CSS display:block to apply before animating opacity
+            setTimeout(() => {
+                els.loginModal.classList.remove('opacity-0');
+                els.modalContent.classList.remove('scale-95');
+            }, 10);
+        }
+
+        function closeModal() {
+            els.loginModal.classList.add('opacity-0');
+            els.modalContent.classList.add('scale-95');
+            setTimeout(() => {
+                els.loginModal.classList.add('hidden');
+                document.getElementById('login-error').classList.add('hidden');
+            }, 300); // match transition duration
+        }
+
+        els.btnOpenLogin.addEventListener('click', openModal);
+        document.getElementById('btn-close-modal').addEventListener('click', closeModal);
+
+        document.getElementById('btn-submit-login').addEventListener('click', () => {
+            const u = document.getElementById('username').value.trim();
+            const p = document.getElementById('password').value.trim();
+            
+            // Check provided custom credentials
+            const valid1 = (u === 'lneedham' && p === '09111941');
+            const valid2 = (u === 'dneedham' && p === '28041973');
+
+            if (valid1 || valid2) {
+                isAdmin = true;
+                closeModal();
+                
+                els.btnOpenLogin.classList.add('hidden');
+                els.btnLogout.classList.remove('hidden');
+                els.cmsPanel.classList.remove('hidden');
+                
+                // Clear fields
+                document.getElementById('username').value = '';
+                document.getElementById('password').value = '';
+                document.getElementById('login-error').classList.add('hidden');
+                
+                showToast(`Welcome back, ${u}. Admin privileges enabled.`, "success");
+                
+                // Auto switch to posts tab
+                document.querySelector('[data-tab="home"]').click();
+            } else {
+                document.getElementById('login-error').classList.remove('hidden');
+            }
+        });
+
+        els.btnLogout.addEventListener('click', () => {
+            isAdmin = false;
+            els.btnOpenLogin.classList.remove('hidden');
+            els.btnLogout.classList.add('hidden');
+            els.cmsPanel.classList.add('hidden');
+            showToast("Logged out successfully.", "info");
+        });
+
+        // Social Sharing Links
+        document.querySelectorAll('.social-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const platform = e.currentTarget.getAttribute('data-share');
+                const url = encodeURIComponent(window.location.href);
+                const text = encodeURIComponent("Check out the latest updates from the University Portal.");
+                let shareUrl = '';
+                
+                switch(platform) {
+                    case 'facebook': shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${url}`; break;
+                    case 'x': shareUrl = `https://twitter.com/intent/tweet?url=${url}&text=${text}`; break;
+                    case 'linkedin': shareUrl = `https://www.linkedin.com/shareArticle?mini=true&url=${url}`; break;
+                    case 'email': window.location.href = `mailto:?subject=${text}&body=${url}`; return;
+                }
+                
+                if (shareUrl) window.open(shareUrl, '_blank', 'width=600,height=400,scrollbars=no');
+            });
+        });
+
+        // Dummy Feedback Submission
+        document.getElementById('feedback-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('btn-submit-fb');
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-circle-notch fa-spin mr-2"></i>Sending...';
+            
+            // Simulate network request
+            setTimeout(() => {
+                showToast("Feedback sent directly to administration.", "success");
+                e.target.reset();
+                btn.disabled = false;
+                btn.textContent = 'Send Feedback';
+            }, 800);
+        });
+
+        // Initialize database connection on load
+        setupRealtimeListener();
+
     </script>
 </body>
 </html>
