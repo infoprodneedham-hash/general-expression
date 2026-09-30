@@ -102,8 +102,8 @@
                 </nav>
 
                 <div class="flex items-center">
-                    <button id="btn-login-open" class="text-xs sm:text-sm font-medium text-gray-300 hover:text-white transition px-3 py-1.5 rounded border border-gray-600">Admin Login</button>
-                    <button id="btn-logout" class="hidden text-xs sm:text-sm font-medium text-edu-gold hover:text-white transition px-3 py-1.5">Logout</button>
+                    <button id="btn-login-open" class="text-xs sm:text-sm font-medium text-gray-300 hover:text-white transition px-3 py-1.5 rounded border border-gray-600 hover:bg-gray-700">Admin Login</button>
+                    <button id="btn-logout" class="hidden text-xs sm:text-sm font-medium text-edu-gold hover:text-white transition px-3 py-1.5 bg-gray-800 rounded">Logout</button>
                 </div>
             </div>
         </div>
@@ -131,9 +131,9 @@
                     Welcome to the official repository. Stay informed with the latest updates, academic achievements, and historical insights from our institution.
                 </p>
             </div>
-            <div class="md:w-2/5 relative z-10">
+            <div class="md:w-2/5 relative z-10 flex justify-center md:justify-end">
                 <!-- Moderate sized historic library side image -->
-                <img src="https://images.unsplash.com/photo-1507842217343-583bb7270b66?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Historic Library" class="rounded-lg shadow-xl border-2 border-edu-gold/30 max-h-48 object-cover w-full">
+                <img src="https://images.unsplash.com/photo-1507842217343-583bb7270b66?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Historic Library" class="rounded-lg shadow-xl border-2 border-edu-gold/30 max-h-48 md:max-h-56 object-cover w-full max-w-md">
             </div>
             <!-- Decorative element -->
             <div class="absolute right-0 top-0 w-48 h-48 bg-edu-crimson rounded-full mix-blend-multiply filter blur-3xl opacity-20 transform translate-x-1/3 -translate-y-1/3"></div>
@@ -155,8 +155,8 @@
                     
                     <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-t pt-4">
                         <div class="w-full sm:w-auto flex-grow">
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Attach Image <span class="text-xs text-gray-400 font-normal">(Leave blank to keep existing)</span></label>
-                            <input type="file" id="post-image" accept="image/*" class="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-semibold file:bg-edu-bg file:text-edu-navy hover:file:bg-gray-200 transition">
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Attach Image <span class="text-xs text-gray-400 font-normal">(Optional. Auto-converted to Base64)</span></label>
+                            <input type="file" id="post-image" accept="image/*" class="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-semibold file:bg-edu-bg file:text-edu-navy hover:file:bg-gray-200 transition cursor-pointer">
                         </div>
                         <div class="flex gap-2 w-full sm:w-auto">
                             <button id="btn-cancel-edit" class="hidden w-full sm:w-auto bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium py-2.5 px-4 rounded shadow transition whitespace-nowrap">Cancel</button>
@@ -218,7 +218,7 @@
                 <form id="feedback-form" class="space-y-4">
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <input type="text" id="fb-name" required placeholder="Full Name" class="w-full px-4 py-2 border border-gray-300 rounded focus:ring-1 focus:ring-edu-navy outline-none">
-                        <input type="email" id="fb-email" required placeholder="Email Address" class="w-full px-4 py-2 border border-gray-300 rounded focus:ring-1 focus:ring-edu-navy outline-none">
+                        <input type="email" id="fb-email" required placeholder="Your Email Address" class="w-full px-4 py-2 border border-gray-300 rounded focus:ring-1 focus:ring-edu-navy outline-none">
                     </div>
                     <textarea id="fb-message" required rows="5" placeholder="Your Message" class="w-full px-4 py-2 border border-gray-300 rounded focus:ring-1 focus:ring-edu-navy outline-none"></textarea>
                     <button type="submit" id="btn-submit-fb" class="w-full bg-edu-crimson hover:bg-red-900 text-white font-medium py-3 rounded shadow transition text-lg">Send Feedback</button>
@@ -227,6 +227,7 @@
         </div>
     </main>
 
+    <!-- Login Modal (Email + Password) -->
     <div id="login-modal" class="fixed inset-0 bg-edu-navy/90 backdrop-blur-sm z-[100] hidden flex items-center justify-center p-4 opacity-0 transition-opacity duration-300">
         <div class="bg-white rounded-lg shadow-2xl max-w-sm w-full overflow-hidden transform scale-95 transition-transform duration-300" id="login-modal-content">
             <div class="bg-edu-navy px-5 py-4 flex justify-between items-center text-white border-b border-edu-gold/30">
@@ -239,12 +240,12 @@
                 </div>
                 <div class="space-y-4">
                     <div>
-                        <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">Username</label>
-                        <input type="text" id="username" class="w-full px-4 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-edu-navy outline-none transition" placeholder="e.g., lneedham">
+                        <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">Email Address</label>
+                        <input type="email" id="email" class="w-full px-4 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-edu-navy outline-none transition" placeholder="admin@university.edu">
                     </div>
                     <div>
-                        <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">Password / Code</label>
-                        <input type="password" id="password" class="w-full px-4 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-edu-navy outline-none transition">
+                        <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">Password</label>
+                        <input type="password" id="password" class="w-full px-4 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-edu-navy outline-none transition" placeholder="••••••••">
                     </div>
                     <button id="btn-submit-login" class="w-full bg-edu-gold hover:bg-yellow-600 text-edu-navy font-bold py-3 rounded shadow transition mt-4 flex justify-center items-center">
                         <span id="login-btn-text">Login to CMS</span>
@@ -254,13 +255,28 @@
         </div>
     </div>
 
+    <!-- Custom Delete Confirmation Modal -->
+    <div id="delete-modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-[110] hidden flex items-center justify-center p-4 opacity-0 transition-opacity duration-200">
+        <div class="bg-white rounded-lg shadow-2xl max-w-sm w-full p-6 text-center transform scale-95 transition-transform duration-200" id="delete-modal-content">
+            <div class="w-16 h-16 rounded-full bg-red-100 flex items-center justify-center mx-auto mb-4">
+                <i class="fas fa-exclamation-triangle text-2xl text-red-600"></i>
+            </div>
+            <h3 class="text-xl font-bold text-gray-800 mb-2">Delete Post?</h3>
+            <p class="text-gray-500 mb-6">This action cannot be undone. Are you sure you want to permanently remove this post?</p>
+            <div class="flex gap-3 justify-center">
+                <button id="btn-cancel-delete" class="px-5 py-2.5 bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium rounded transition">Cancel</button>
+                <button id="btn-confirm-delete" class="px-5 py-2.5 bg-red-600 hover:bg-red-700 text-white font-medium rounded transition">Yes, Delete</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Component -->
     <div id="toast" class="toast bg-gray-900 text-white px-5 py-4 rounded shadow-2xl flex items-center gap-3 border-l-4 border-edu-gold">
         <i id="toast-icon" class="fas fa-info-circle text-edu-gold text-xl"></i>
         <span id="toast-message" class="text-sm font-medium">Notification message here</span>
     </div>
 
     <script type="module">
-        // Import Firebase SDKs (v11.6.1 standard)
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, collection, addDoc, onSnapshot, serverTimestamp, doc, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
@@ -275,7 +291,6 @@
             appId: "1:1002364330609:web:3053bb7fadc93ce3d9f1d0"
         };
 
-        // Initialize Firebase
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
@@ -283,10 +298,11 @@
         // Application State
         let isAdmin = false;
         let editingPostId = null;
+        let postToDeleteId = null;
         let currentPosts = [];
         let unsubscribePosts = null;
 
-        // DOM Elements References
+        // UI Elements
         const els = {
             recentContainer: document.getElementById('posts-container-recent'),
             archiveSection: document.getElementById('archive-section'),
@@ -296,6 +312,8 @@
             cmsPanel: document.getElementById('cms-panel'),
             loginModal: document.getElementById('login-modal'),
             modalContent: document.getElementById('login-modal-content'),
+            deleteModal: document.getElementById('delete-modal'),
+            deleteModalContent: document.getElementById('delete-modal-content'),
             btnOpenLogin: document.getElementById('btn-login-open'),
             btnLogout: document.getElementById('btn-logout'),
             navLinks: document.querySelectorAll('.nav-link'),
@@ -341,7 +359,7 @@
                 document.body.classList.add('admin-mode');
                 els.btnOpenLogin.classList.add('hidden');
                 els.btnLogout.classList.remove('hidden');
-                closeModal();
+                closeModal(els.loginModal, els.modalContent);
             } else {
                 isAdmin = false;
                 document.body.classList.remove('admin-mode');
@@ -352,32 +370,32 @@
         });
 
         document.getElementById('btn-submit-login').addEventListener('click', async () => {
-            const usernameInput = document.getElementById('username').value.trim();
+            // Using the full email directly as requested
+            const emailInput = document.getElementById('email').value.trim();
             const passwordInput = document.getElementById('password').value.trim();
             const btnText = document.getElementById('login-btn-text');
             const errorDiv = document.getElementById('login-error');
             
-            if (!usernameInput || !passwordInput) {
+            if (!emailInput || !passwordInput) {
                 errorDiv.classList.remove('hidden');
                 errorDiv.innerHTML = '<i class="fas fa-exclamation-circle"></i> Please fill in all fields.';
                 return;
             }
-
-            const email = `${usernameInput.toLowerCase()}@admin.com`;
             
             btnText.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i>';
             errorDiv.classList.add('hidden');
 
             try {
-                await signInWithEmailAndPassword(auth, email, passwordInput);
-                showToast(`Welcome back, ${usernameInput}.`, "success");
-                document.getElementById('username').value = '';
+                // SignIn strictly using Email and Password
+                await signInWithEmailAndPassword(auth, emailInput, passwordInput);
+                showToast("Logged in successfully.", "success");
+                document.getElementById('email').value = '';
                 document.getElementById('password').value = '';
-                document.querySelector('[data-tab="home"]').click(); // Auto switch to feed
+                document.querySelector('[data-tab="home"]').click(); 
             } catch (error) {
                 console.error("Login Error:", error);
                 errorDiv.classList.remove('hidden');
-                errorDiv.innerHTML = '<i class="fas fa-exclamation-circle"></i> Invalid credentials or unauthorized.';
+                errorDiv.innerHTML = '<i class="fas fa-exclamation-circle"></i> Invalid email or password.';
             } finally {
                 btnText.textContent = 'Login to CMS';
             }
@@ -424,7 +442,7 @@
                     console.error("Firestore Error:", error);
                     els.loadingSpinner.classList.add('hidden');
                     els.emptyState.classList.remove('hidden');
-                    els.emptyState.innerHTML = '<i class="fas fa-exclamation-triangle text-4xl text-red-300 mb-3"></i><p class="text-red-500">Could not load posts. Verify permissions and keys.</p>';
+                    els.emptyState.innerHTML = '<i class="fas fa-exclamation-triangle text-4xl text-red-300 mb-3"></i><p class="text-red-500">Could not load posts. Database may be uninitialized.</p>';
                 });
             } catch (err) {
                 console.error("Setup error:", err);
@@ -437,12 +455,14 @@
             els.archiveContainer.innerHTML = '';
             
             const now = new Date();
+            // Calculate 7 days ago timestamp
             const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
             
             const recentPosts = [];
             const archiveGroups = {}; 
             const archiveKeys = []; 
 
+            // Grouping logic based on 7-day rule
             posts.forEach(post => {
                 const postDate = post.timestamp ? post.timestamp.toDate() : new Date();
                 
@@ -483,6 +503,7 @@
 
                 html += `<div class="post-text text-gray-700 leading-relaxed clamp-text">${formattedContent}</div>`;
                 
+                // Admin Actions
                 html += `
                     <div class="admin-actions mt-5 pt-4 border-t border-gray-100 flex gap-3 justify-end">
                         <button class="btn-edit text-sm text-blue-600 hover:text-blue-800 font-medium px-3 py-1.5 rounded border border-blue-200 hover:bg-blue-50 transition flex items-center" data-id="${post.id}"><i class="fas fa-edit mr-2"></i> Edit</button>
@@ -492,7 +513,7 @@
 
                 article.innerHTML = html;
                 
-                // Expanding text logic
+                // Expanding text logic for long posts
                 setTimeout(() => {
                     const textDiv = article.querySelector('.post-text');
                     if (textDiv && textDiv.scrollHeight > textDiv.clientHeight) {
@@ -516,19 +537,19 @@
                 return article;
             };
 
-            // Render Recent
+            // Inject Recent Posts
             if (recentPosts.length > 0) {
                 recentPosts.forEach(post => els.recentContainer.appendChild(createPostElement(post)));
             } else {
-                els.recentContainer.innerHTML = '<p class="text-gray-500 italic mb-6 bg-white p-6 rounded-xl border border-gray-200 shadow-sm">No recent announcements.</p>';
+                els.recentContainer.innerHTML = '<p class="text-gray-500 italic mb-6 bg-white p-6 rounded-xl border border-gray-200 shadow-sm text-center">No announcements in the last 7 days.</p>';
             }
 
-            // Render Archive
+            // Inject Archived Posts
             if (archiveKeys.length > 0) {
                 els.archiveSection.classList.remove('hidden');
                 archiveKeys.forEach(monthYear => {
                     const monthHeader = document.createElement('h3');
-                    monthHeader.className = 'text-xl font-serif font-semibold text-gray-700 mt-6 mb-4 pl-3 border-l-4 border-edu-gold';
+                    monthHeader.className = 'text-xl font-serif font-semibold text-gray-700 mt-6 mb-4 pl-3 border-l-4 border-edu-gold bg-gray-50 py-2 rounded-r';
                     monthHeader.textContent = monthYear;
                     els.archiveContainer.appendChild(monthHeader);
 
@@ -539,26 +560,19 @@
             }
         }
 
-        const handlePostAction = async (e) => {
+        const handlePostAction = (e) => {
             if (!isAdmin) return;
             
             const editBtn = e.target.closest('.btn-edit');
             const delBtn = e.target.closest('.btn-delete');
             
+            // Delete Action uses custom modal instead of native confirm()
             if (delBtn) {
-                const id = delBtn.getAttribute('data-id');
-                if (confirm('Are you sure you want to delete this post?')) {
-                    try {
-                        await deleteDoc(doc(db, 'posts', id));
-                        showToast('Post deleted successfully.', 'success');
-                        if (editingPostId === id) resetCMSForm();
-                    } catch (err) {
-                        console.error("Delete error:", err);
-                        showToast('Error deleting post.', 'error');
-                    }
-                }
+                postToDeleteId = delBtn.getAttribute('data-id');
+                openModal(els.deleteModal, els.deleteModalContent);
             }
             
+            // Edit Action
             if (editBtn) {
                 const id = editBtn.getAttribute('data-id');
                 const post = currentPosts.find(p => p.id === id);
@@ -574,15 +588,43 @@
             }
         };
 
+        // Attach listeners using event delegation
         els.recentContainer.addEventListener('click', handlePostAction);
         els.archiveContainer.addEventListener('click', handlePostAction);
+
+        // Confirm Delete logic
+        document.getElementById('btn-cancel-delete').addEventListener('click', () => {
+            closeModal(els.deleteModal, els.deleteModalContent);
+            postToDeleteId = null;
+        });
+
+        document.getElementById('btn-confirm-delete').addEventListener('click', async () => {
+            if (!postToDeleteId || !isAdmin) return;
+            const btn = document.getElementById('btn-confirm-delete');
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i>';
+            
+            try {
+                await deleteDoc(doc(db, 'posts', postToDeleteId));
+                showToast('Post deleted permanently.', 'success');
+                if (editingPostId === postToDeleteId) resetCMSForm();
+            } catch (err) {
+                console.error("Delete error:", err);
+                showToast('Error deleting post.', 'error');
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'Yes, Delete';
+                closeModal(els.deleteModal, els.deleteModalContent);
+                postToDeleteId = null;
+            }
+        });
 
         function resetCMSForm() {
             document.getElementById('post-heading').value = '';
             document.getElementById('post-body').value = '';
             document.getElementById('post-image').value = '';
             editingPostId = null;
-            document.getElementById('btn-submit-post').textContent = 'Publish Post';
+            document.getElementById('btn-submit-post').innerHTML = 'Publish Post';
             document.getElementById('btn-cancel-edit').classList.add('hidden');
         }
 
@@ -609,9 +651,10 @@
             
             try {
                 let imageBase64 = null;
+                // Convert image to Base64 to store directly in document
                 if (fileInput.files && fileInput.files[0]) {
                     const file = fileInput.files[0];
-                    if (file.size > 1048576) { // 1MB limit
+                    if (file.size > 1048576) { // 1MB limit for Firestore doc size safety
                         throw new Error("Image too large. Limit is 1MB.");
                     }
                     imageBase64 = await toBase64(file);
@@ -624,7 +667,7 @@
                     await updateDoc(doc(db, 'posts', editingPostId), postData);
                     showToast("Post updated successfully!", "success");
                 } else {
-                    postData.timestamp = serverTimestamp();
+                    postData.timestamp = serverTimestamp(); // Assign server time on creation
                     await addDoc(collection(db, 'posts'), postData);
                     showToast("Post published successfully!", "success");
                 }
@@ -634,7 +677,7 @@
                 showToast(err.message || "Failed to save post.", "error");
             } finally {
                 btn.disabled = false; 
-                if (!editingPostId) btn.textContent = 'Publish Post';
+                if (!editingPostId) btn.innerHTML = 'Publish Post';
                 else btn.innerHTML = '<i class="fas fa-save mr-2"></i>Update Post';
             }
         });
@@ -649,26 +692,29 @@
             });
         });
 
-        function openModal() {
-            els.loginModal.classList.remove('hidden');
+        // Generic Modal logic
+        function openModal(modalEl, contentEl) {
+            modalEl.classList.remove('hidden');
             setTimeout(() => {
-                els.loginModal.classList.remove('opacity-0');
-                els.modalContent.classList.remove('scale-95');
+                modalEl.classList.remove('opacity-0');
+                contentEl.classList.remove('scale-95');
             }, 10);
         }
 
-        function closeModal() {
-            els.loginModal.classList.add('opacity-0');
-            els.modalContent.classList.add('scale-95');
+        function closeModal(modalEl, contentEl) {
+            modalEl.classList.add('opacity-0');
+            contentEl.classList.add('scale-95');
             setTimeout(() => {
-                els.loginModal.classList.add('hidden');
-                document.getElementById('login-error').classList.add('hidden');
+                modalEl.classList.add('hidden');
+                const errDiv = document.getElementById('login-error');
+                if(errDiv) errDiv.classList.add('hidden');
             }, 300);
         }
 
-        els.btnOpenLogin.addEventListener('click', openModal);
-        document.getElementById('btn-close-modal').addEventListener('click', closeModal);
+        els.btnOpenLogin.addEventListener('click', () => openModal(els.loginModal, els.modalContent));
+        document.getElementById('btn-close-modal').addEventListener('click', () => closeModal(els.loginModal, els.modalContent));
 
+        // Social sharing mock implementation
         document.querySelectorAll('.social-btn').forEach(btn => {
             btn.addEventListener('click', (e) => {
                 const platform = e.currentTarget.getAttribute('data-share');
@@ -686,6 +732,7 @@
             });
         });
 
+        // Mock Feedback form
         document.getElementById('feedback-form').addEventListener('submit', (e) => {
             e.preventDefault();
             const btn = document.getElementById('btn-submit-fb');
@@ -699,7 +746,7 @@
             }, 800);
         });
 
-        // Initialize Firestore listening immediately
+        // Boot up
         setupRealtimeListener();
 
     </script>
