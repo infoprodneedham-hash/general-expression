@@ -76,6 +76,7 @@
         
         /* Admin Controls */
         body:not(.admin-mode) .admin-actions { display: none !important; }
+        body:not(.admin-mode) #cms-panel { display: none !important; }
         
         /* General Utilities */
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
@@ -85,6 +86,7 @@
 </head>
 <body class="text-gray-800 antialiased font-sans flex flex-col min-h-screen">
 
+    <!-- Header Navigation -->
     <header class="bg-edu-navy text-white sticky top-0 z-40 shadow-md">
         <div class="max-w-6xl mx-auto px-4 sm:px-6">
             <div class="flex flex-wrap justify-between items-center h-16 sm:h-20">
@@ -120,48 +122,50 @@
     </div>
 
     <div class="bg-edu-navy overflow-hidden relative shadow-inner">
-        <div class="max-w-6xl mx-auto px-4 sm:px-6 flex flex-col md:flex-row items-center justify-between py-12 md:py-16 gap-8">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 flex flex-col md:flex-row items-center justify-between py-10 md:py-12 gap-6">
             <div class="text-center md:text-left md:w-3/5 z-10 relative">
-                <h1 class="text-3xl sm:text-4xl md:text-5xl font-serif font-bold text-white mb-4 leading-tight">
+                <h1 class="text-2xl sm:text-3xl md:text-4xl font-serif font-bold text-white mb-3 leading-tight">
                     Preserving Knowledge, <br><span class="text-edu-gold">Inspiring the Future.</span>
                 </h1>
-                <p class="text-base sm:text-lg text-gray-300 font-light max-w-lg mx-auto md:mx-0">
+                <p class="text-sm sm:text-base text-gray-300 font-light max-w-lg mx-auto md:mx-0">
                     Welcome to the official repository. Stay informed with the latest updates, academic achievements, and historical insights from our institution.
                 </p>
             </div>
             <div class="md:w-2/5 relative z-10">
-                <!-- Modestly sized historic library side image -->
-                <img src="https://images.unsplash.com/photo-1507842217343-583bb7270b66?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Historic Library" class="rounded-xl shadow-2xl border-4 border-edu-gold/30 max-h-64 object-cover w-full">
+                <!-- Moderate sized historic library side image -->
+                <img src="https://images.unsplash.com/photo-1507842217343-583bb7270b66?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Historic Library" class="rounded-lg shadow-xl border-2 border-edu-gold/30 max-h-48 object-cover w-full">
             </div>
-            <!-- Decorative background element -->
-            <div class="absolute right-0 top-0 w-64 h-64 bg-edu-crimson rounded-full mix-blend-multiply filter blur-3xl opacity-20 transform translate-x-1/2 -translate-y-1/2"></div>
+            <!-- Decorative element -->
+            <div class="absolute right-0 top-0 w-48 h-48 bg-edu-crimson rounded-full mix-blend-multiply filter blur-3xl opacity-20 transform translate-x-1/3 -translate-y-1/3"></div>
         </div>
     </div>
 
-    <main class="flex-grow w-full max-w-4xl mx-auto px-4 sm:px-6 py-10 relative">
+    <main class="flex-grow w-full max-w-4xl mx-auto px-4 sm:px-6 py-8 relative">
         
         <!-- TAB 1: Posts (Default) -->
         <div id="tab-home" class="tab-content active">
             
             <!-- Admin CMS Panel -->
-            <div id="cms-panel" class="hidden mb-10 bg-white p-6 rounded-lg shadow-md border border-gray-200 border-t-4 border-t-edu-crimson">
-                <h2 class="text-xl font-serif font-bold text-edu-navy mb-4"><i class="fas fa-pen-nib mr-2"></i>Create New Post</h2>
+            <div id="cms-panel" class="mb-10 bg-white p-6 rounded-lg shadow-md border border-gray-200 border-t-4 border-t-edu-crimson">
+                <h2 class="text-xl font-serif font-bold text-edu-navy mb-4"><i class="fas fa-pen-nib mr-2"></i>Create/Edit Post</h2>
                 <div class="space-y-4">
                     <input type="text" id="post-heading" class="w-full px-4 py-3 border border-gray-300 rounded focus:ring-2 focus:ring-edu-navy outline-none font-semibold text-lg" placeholder="Post Title...">
                     
-                    <textarea id="post-body" rows="6" class="w-full px-4 py-3 border border-gray-300 rounded focus:ring-2 focus:ring-edu-navy outline-none" placeholder="Write your full content here..."></textarea>
+                    <textarea id="post-body" rows="5" class="w-full px-4 py-3 border border-gray-300 rounded focus:ring-2 focus:ring-edu-navy outline-none" placeholder="Write your full content here..."></textarea>
                     
                     <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-t pt-4">
                         <div class="w-full sm:w-auto flex-grow">
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Attach Image</label>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Attach Image <span class="text-xs text-gray-400 font-normal">(Leave blank to keep existing)</span></label>
                             <input type="file" id="post-image" accept="image/*" class="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-semibold file:bg-edu-bg file:text-edu-navy hover:file:bg-gray-200 transition">
                         </div>
-                        <button id="btn-submit-post" class="w-full sm:w-auto bg-edu-navy hover:bg-blue-900 text-white font-medium py-2.5 px-8 rounded shadow transition whitespace-nowrap">Publish Post</button>
+                        <div class="flex gap-2 w-full sm:w-auto">
+                            <button id="btn-cancel-edit" class="hidden w-full sm:w-auto bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium py-2.5 px-4 rounded shadow transition whitespace-nowrap">Cancel</button>
+                            <button id="btn-submit-post" class="w-full sm:w-auto bg-edu-navy hover:bg-blue-900 text-white font-medium py-2.5 px-8 rounded shadow transition whitespace-nowrap">Publish Post</button>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Posts Feed Section -->
             <div class="flex justify-between items-end mb-6 border-b border-gray-200 pb-2">
                 <h2 class="text-2xl font-serif font-bold text-edu-navy">Recent Announcements</h2>
                 <div id="loading-spinner" class="text-edu-gold flex items-center gap-2">
@@ -170,8 +174,17 @@
                 </div>
             </div>
             
-            <div id="posts-container">
-                <!-- Posts will be injected here dynamically -->
+            <div id="posts-container-recent">
+                <!-- Recent posts dynamically injected here -->
+            </div>
+
+            <div id="archive-section" class="hidden mt-12">
+                <h2 class="text-2xl font-serif font-bold text-edu-navy mb-6 border-b border-gray-200 pb-2 flex items-center">
+                    <i class="fas fa-archive mr-3 text-edu-gold"></i>Archive
+                </h2>
+                <div id="posts-container-archive">
+                    <!-- Archived posts dynamically injected here grouped by month -->
+                </div>
             </div>
             
             <div id="empty-state" class="hidden text-center py-16 bg-white rounded-lg border border-gray-200 border-dashed shadow-sm">
@@ -217,7 +230,7 @@
     <div id="login-modal" class="fixed inset-0 bg-edu-navy/90 backdrop-blur-sm z-[100] hidden flex items-center justify-center p-4 opacity-0 transition-opacity duration-300">
         <div class="bg-white rounded-lg shadow-2xl max-w-sm w-full overflow-hidden transform scale-95 transition-transform duration-300" id="login-modal-content">
             <div class="bg-edu-navy px-5 py-4 flex justify-between items-center text-white border-b border-edu-gold/30">
-                <h3 class="font-serif font-semibold text-lg"><i class="fas fa-lock mr-2 text-edu-gold"></i> Admin Access</h3>
+                <h3 class="font-serif font-semibold text-lg"><i class="fas fa-lock mr-2 text-edu-gold"></i> Admin Login</h3>
                 <button id="btn-close-modal" class="text-gray-300 hover:text-white transition"><i class="fas fa-times text-xl"></i></button>
             </div>
             <div class="p-6">
@@ -227,13 +240,15 @@
                 <div class="space-y-4">
                     <div>
                         <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">Username</label>
-                        <input type="text" id="username" class="w-full px-4 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-edu-navy outline-none transition">
+                        <input type="text" id="username" class="w-full px-4 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-edu-navy outline-none transition" placeholder="e.g., lneedham">
                     </div>
                     <div>
-                        <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">Access Code</label>
+                        <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">Password / Code</label>
                         <input type="password" id="password" class="w-full px-4 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-edu-navy outline-none transition">
                     </div>
-                    <button id="btn-submit-login" class="w-full bg-edu-gold hover:bg-yellow-600 text-edu-navy font-bold py-3 rounded shadow transition mt-4">Login to CMS</button>
+                    <button id="btn-submit-login" class="w-full bg-edu-gold hover:bg-yellow-600 text-edu-navy font-bold py-3 rounded shadow transition mt-4 flex justify-center items-center">
+                        <span id="login-btn-text">Login to CMS</span>
+                    </button>
                 </div>
             </div>
         </div>
@@ -245,34 +260,37 @@
     </div>
 
     <script type="module">
-        // Import exact SDK versions requested
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-app.js";
-        import { getFirestore, collection, addDoc, onSnapshot, serverTimestamp, doc, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-firestore.js";
+        // Import Firebase SDKs (v11.6.1 standard)
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, collection, addDoc, onSnapshot, serverTimestamp, doc, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        // User's EXACT provided configuration
+        // Required Firebase configuration
         const firebaseConfig = {
             apiKey: "AIzaSyAYlaP5EXWeafNUAwR0icxQyWOHUFpHp_s",
             authDomain: "blog-posts-d4c89.firebaseapp.com",
             projectId: "blog-posts-d4c89",
             storageBucket: "blog-posts-d4c89.firebasestorage.app",
             messagingSenderId: "1002364330609",
-            appId: "1:1002364330609:web:3053bb7fadc93ce3d9f1d0",
-            measurementId: "G-685Q5LC2DC"
+            appId: "1:1002364330609:web:3053bb7fadc93ce3d9f1d0"
         };
 
-        // Initialize App and Database
+        // Initialize Firebase
         const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
         const db = getFirestore(app);
 
         // Application State
         let isAdmin = false;
-        let postsUnsubscribe = null;
         let editingPostId = null;
         let currentPosts = [];
+        let unsubscribePosts = null;
 
         // DOM Elements References
         const els = {
-            postsContainer: document.getElementById('posts-container'),
+            recentContainer: document.getElementById('posts-container-recent'),
+            archiveSection: document.getElementById('archive-section'),
+            archiveContainer: document.getElementById('posts-container-archive'),
             loadingSpinner: document.getElementById('loading-spinner'),
             emptyState: document.getElementById('empty-state'),
             cmsPanel: document.getElementById('cms-panel'),
@@ -284,13 +302,11 @@
             tabContents: document.querySelectorAll('.tab-content')
         };
 
-        // UI Helpers
         let toastTimer;
         function showToast(msg, type = 'info') {
             const t = document.getElementById('toast');
             document.getElementById('toast-message').textContent = msg;
             
-            // Configure colors based on type
             t.className = `toast px-5 py-4 rounded shadow-2xl flex items-center gap-3 border-l-4 text-white bg-gray-900 ${
                 type === 'success' ? 'border-green-500' : 
                 type === 'error' ? 'border-red-500' : 'border-edu-gold'
@@ -312,7 +328,6 @@
             }[tag] || tag));
         }
 
-        // Convert selected image file to Base64 string
         const toBase64 = file => new Promise((resolve, reject) => {
             const reader = new FileReader();
             reader.readAsDataURL(file);
@@ -320,30 +335,87 @@
             reader.onerror = error => reject(error);
         });
 
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                isAdmin = true;
+                document.body.classList.add('admin-mode');
+                els.btnOpenLogin.classList.add('hidden');
+                els.btnLogout.classList.remove('hidden');
+                closeModal();
+            } else {
+                isAdmin = false;
+                document.body.classList.remove('admin-mode');
+                els.btnOpenLogin.classList.remove('hidden');
+                els.btnLogout.classList.add('hidden');
+                resetCMSForm();
+            }
+        });
+
+        document.getElementById('btn-submit-login').addEventListener('click', async () => {
+            const usernameInput = document.getElementById('username').value.trim();
+            const passwordInput = document.getElementById('password').value.trim();
+            const btnText = document.getElementById('login-btn-text');
+            const errorDiv = document.getElementById('login-error');
+            
+            if (!usernameInput || !passwordInput) {
+                errorDiv.classList.remove('hidden');
+                errorDiv.innerHTML = '<i class="fas fa-exclamation-circle"></i> Please fill in all fields.';
+                return;
+            }
+
+            const email = `${usernameInput.toLowerCase()}@admin.com`;
+            
+            btnText.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i>';
+            errorDiv.classList.add('hidden');
+
+            try {
+                await signInWithEmailAndPassword(auth, email, passwordInput);
+                showToast(`Welcome back, ${usernameInput}.`, "success");
+                document.getElementById('username').value = '';
+                document.getElementById('password').value = '';
+                document.querySelector('[data-tab="home"]').click(); // Auto switch to feed
+            } catch (error) {
+                console.error("Login Error:", error);
+                errorDiv.classList.remove('hidden');
+                errorDiv.innerHTML = '<i class="fas fa-exclamation-circle"></i> Invalid credentials or unauthorized.';
+            } finally {
+                btnText.textContent = 'Login to CMS';
+            }
+        });
+
+        els.btnLogout.addEventListener('click', async () => {
+            try {
+                await signOut(auth);
+                showToast("Logged out successfully.", "info");
+            } catch (err) {
+                console.error("Logout Error:", err);
+            }
+        });
+
         function setupRealtimeListener() {
-            // Using the root 'posts' collection for the user's specific project database
             const postsRef = collection(db, 'posts');
             
             try {
-                postsUnsubscribe = onSnapshot(postsRef, (snapshot) => {
+                unsubscribePosts = onSnapshot(postsRef, (snapshot) => {
                     els.loadingSpinner.classList.add('hidden');
                     
                     if (snapshot.empty) {
-                        els.postsContainer.innerHTML = '';
+                        els.recentContainer.innerHTML = '';
+                        els.archiveSection.classList.add('hidden');
                         els.emptyState.classList.remove('hidden');
                         return;
                     }
                     
                     els.emptyState.classList.add('hidden');
                     
-                    // Convert to array and sort locally to avoid missing index errors in Firestore
                     let posts = [];
                     snapshot.forEach(doc => posts.push({ id: doc.id, ...doc.data() }));
                     
+                    // Sort descending
                     posts.sort((a, b) => {
                         const timeA = a.timestamp ? a.timestamp.toMillis() : 0;
                         const timeB = b.timestamp ? b.timestamp.toMillis() : 0;
-                        return timeB - timeA; // Descending
+                        return timeB - timeA; 
                     });
 
                     currentPosts = posts;
@@ -352,8 +424,7 @@
                     console.error("Firestore Error:", error);
                     els.loadingSpinner.classList.add('hidden');
                     els.emptyState.classList.remove('hidden');
-                    els.emptyState.innerHTML = '<i class="fas fa-exclamation-triangle text-4xl text-red-300 mb-3"></i><p class="text-red-500">Could not load posts. Please check database permissions.</p>';
-                    showToast("Database connection failed.", "error");
+                    els.emptyState.innerHTML = '<i class="fas fa-exclamation-triangle text-4xl text-red-300 mb-3"></i><p class="text-red-500">Could not load posts. Verify permissions and keys.</p>';
                 });
             } catch (err) {
                 console.error("Setup error:", err);
@@ -362,19 +433,17 @@
         }
 
         function renderPosts(posts) {
-            els.postsContainer.innerHTML = '';
+            els.recentContainer.innerHTML = '';
+            els.archiveContainer.innerHTML = '';
             
             const now = new Date();
-            // Calculate the date exactly 7 days ago
             const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
             
             const recentPosts = [];
             const archiveGroups = {}; 
             const archiveKeys = []; 
 
-            // Sort posts into Recent and Archive categories
             posts.forEach(post => {
-                // If a post is brand new, serverTimestamp might not resolve immediately, so default to now
                 const postDate = post.timestamp ? post.timestamp.toDate() : new Date();
                 
                 if (postDate >= sevenDaysAgo) {
@@ -389,8 +458,7 @@
                 }
             });
 
-            // Helper function to build and append a post element
-            const appendPost = (post, container) => {
+            const createPostElement = (post) => {
                 const article = document.createElement('article');
                 article.className = 'bg-white p-6 sm:p-8 rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition duration-300 mb-6';
                 
@@ -398,7 +466,7 @@
                     weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' 
                 }) : "Just now";
 
-                const safeTitle = escapeHTML(post.title || "Untitled Post");
+                const safeTitle = escapeHTML(post.title || "Untitled");
                 const safeContent = escapeHTML(post.content || "");
                 const formattedContent = safeContent.replace(/\n/g, '<br>');
                 
@@ -410,12 +478,11 @@
                 `;
 
                 if (post.imageBase64) {
-                    html += `<img src="${post.imageBase64}" alt="Post image" class="post-image-preview shadow-sm">`;
+                    html += `<img src="${post.imageBase64}" alt="Post attached image" class="post-image-preview shadow-sm">`;
                 }
 
                 html += `<div class="post-text text-gray-700 leading-relaxed clamp-text">${formattedContent}</div>`;
                 
-                // Admin Edit & Delete buttons
                 html += `
                     <div class="admin-actions mt-5 pt-4 border-t border-gray-100 flex gap-3 justify-end">
                         <button class="btn-edit text-sm text-blue-600 hover:text-blue-800 font-medium px-3 py-1.5 rounded border border-blue-200 hover:bg-blue-50 transition flex items-center" data-id="${post.id}"><i class="fas fa-edit mr-2"></i> Edit</button>
@@ -424,9 +491,8 @@
                 `;
 
                 article.innerHTML = html;
-                container.appendChild(article);
                 
-                // Add "Read More" logic if text is long
+                // Expanding text logic
                 setTimeout(() => {
                     const textDiv = article.querySelector('.post-text');
                     if (textDiv && textDiv.scrollHeight > textDiv.clientHeight) {
@@ -443,41 +509,37 @@
                                 btn.innerHTML = 'Read More <i class="fas fa-chevron-down text-xs"></i>';
                             }
                         };
-                        article.appendChild(btn);
+                        article.insertBefore(btn, article.querySelector('.admin-actions'));
                     }
                 }, 10);
+
+                return article;
             };
 
-            // Render Recent Posts
+            // Render Recent
             if (recentPosts.length > 0) {
-                recentPosts.forEach(post => appendPost(post, els.postsContainer));
+                recentPosts.forEach(post => els.recentContainer.appendChild(createPostElement(post)));
             } else {
-                const noRecent = document.createElement('p');
-                noRecent.className = 'text-gray-500 italic mb-6 bg-white p-6 rounded-xl border border-gray-200 shadow-sm';
-                noRecent.textContent = 'No announcements in the last 7 days.';
-                els.postsContainer.appendChild(noRecent);
+                els.recentContainer.innerHTML = '<p class="text-gray-500 italic mb-6 bg-white p-6 rounded-xl border border-gray-200 shadow-sm">No recent announcements.</p>';
             }
 
-            // Render Archived Posts Grouped by Month/Year
+            // Render Archive
             if (archiveKeys.length > 0) {
-                const archiveHeader = document.createElement('h2');
-                archiveHeader.className = 'text-2xl font-serif font-bold text-edu-navy mt-12 mb-6 border-b border-gray-200 pb-2 flex items-center';
-                archiveHeader.innerHTML = '<i class="fas fa-archive mr-3 text-edu-gold"></i>Archive';
-                els.postsContainer.appendChild(archiveHeader);
-
+                els.archiveSection.classList.remove('hidden');
                 archiveKeys.forEach(monthYear => {
                     const monthHeader = document.createElement('h3');
                     monthHeader.className = 'text-xl font-serif font-semibold text-gray-700 mt-6 mb-4 pl-3 border-l-4 border-edu-gold';
                     monthHeader.textContent = monthYear;
-                    els.postsContainer.appendChild(monthHeader);
+                    els.archiveContainer.appendChild(monthHeader);
 
-                    archiveGroups[monthYear].forEach(post => appendPost(post, els.postsContainer));
+                    archiveGroups[monthYear].forEach(post => els.archiveContainer.appendChild(createPostElement(post)));
                 });
+            } else {
+                els.archiveSection.classList.add('hidden');
             }
         }
 
-        // Handle Edit and Delete actions
-        els.postsContainer.addEventListener('click', async (e) => {
+        const handlePostAction = async (e) => {
             if (!isAdmin) return;
             
             const editBtn = e.target.closest('.btn-edit');
@@ -485,15 +547,11 @@
             
             if (delBtn) {
                 const id = delBtn.getAttribute('data-id');
-                if (confirm('Are you sure you want to delete this post? This action cannot be undone.')) {
+                if (confirm('Are you sure you want to delete this post?')) {
                     try {
                         await deleteDoc(doc(db, 'posts', id));
                         showToast('Post deleted successfully.', 'success');
-                        
-                        // Clear edit mode if they delete the post they are currently editing
-                        if (editingPostId === id) {
-                            resetCMSForm();
-                        }
+                        if (editingPostId === id) resetCMSForm();
                     } catch (err) {
                         console.error("Delete error:", err);
                         showToast('Error deleting post.', 'error');
@@ -508,13 +566,16 @@
                     document.getElementById('post-heading').value = post.title || '';
                     document.getElementById('post-body').value = post.content || '';
                     editingPostId = id;
-                    document.getElementById('btn-submit-post').innerHTML = '<i class="fas fa-save mr-2"></i>Update Post';
                     
+                    document.getElementById('btn-submit-post').innerHTML = '<i class="fas fa-save mr-2"></i>Update Post';
+                    document.getElementById('btn-cancel-edit').classList.remove('hidden');
                     els.cmsPanel.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                    showToast('Editing post. Leave image blank to keep current image.', 'info');
                 }
             }
-        });
+        };
+
+        els.recentContainer.addEventListener('click', handlePostAction);
+        els.archiveContainer.addEventListener('click', handlePostAction);
 
         function resetCMSForm() {
             document.getElementById('post-heading').value = '';
@@ -522,9 +583,11 @@
             document.getElementById('post-image').value = '';
             editingPostId = null;
             document.getElementById('btn-submit-post').textContent = 'Publish Post';
+            document.getElementById('btn-cancel-edit').classList.add('hidden');
         }
 
-        // CMS Submit Post
+        document.getElementById('btn-cancel-edit').addEventListener('click', resetCMSForm);
+
         document.getElementById('btn-submit-post').addEventListener('click', async () => {
             if (!isAdmin) return;
             
@@ -537,7 +600,7 @@
             const content = bodyInput.value.trim();
             
             if (!title || !content) { 
-                showToast("Please provide both a title and content.", "error"); 
+                showToast("Title and content are required.", "error"); 
                 return; 
             }
 
@@ -548,65 +611,46 @@
                 let imageBase64 = null;
                 if (fileInput.files && fileInput.files[0]) {
                     const file = fileInput.files[0];
-                    if(file.size > 1048576) {
-                        showToast("Image too large. Please use an image under 1MB.", "error");
-                        btn.disabled = false;
-                        btn.innerHTML = editingPostId ? '<i class="fas fa-save mr-2"></i>Update Post' : 'Publish Post';
-                        return;
+                    if (file.size > 1048576) { // 1MB limit
+                        throw new Error("Image too large. Limit is 1MB.");
                     }
                     imageBase64 = await toBase64(file);
                 }
 
-                const postData = {
-                    title,
-                    content
-                };
-
-                // Only attach image if a new one was uploaded
-                if (imageBase64) {
-                    postData.imageBase64 = imageBase64;
-                }
+                const postData = { title, content };
+                if (imageBase64) postData.imageBase64 = imageBase64;
 
                 if (editingPostId) {
-                    // Update existing document
                     await updateDoc(doc(db, 'posts', editingPostId), postData);
                     showToast("Post updated successfully!", "success");
                 } else {
-                    // Create new document
                     postData.timestamp = serverTimestamp();
                     await addDoc(collection(db, 'posts'), postData);
                     showToast("Post published successfully!", "success");
                 }
-                
                 resetCMSForm();
             } catch (err) {
-                console.error("Publishing/Updating error:", err);
-                showToast("Failed to save post.", "error");
+                console.error("Save error:", err);
+                showToast(err.message || "Failed to save post.", "error");
             } finally {
                 btn.disabled = false; 
-                if (!editingPostId) {
-                    btn.textContent = 'Publish Post';
-                }
+                if (!editingPostId) btn.textContent = 'Publish Post';
+                else btn.innerHTML = '<i class="fas fa-save mr-2"></i>Update Post';
             }
         });
 
-        // Tab Navigation
         els.navLinks.forEach(btn => {
             btn.addEventListener('click', (e) => {
                 const tabId = e.target.getAttribute('data-tab');
-                
                 els.navLinks.forEach(el => el.classList.remove('active'));
                 e.target.classList.add('active');
-                
                 els.tabContents.forEach(el => el.classList.remove('active'));
                 document.getElementById('tab-' + tabId).classList.add('active');
             });
         });
 
-        // Authentication Logic
         function openModal() {
             els.loginModal.classList.remove('hidden');
-            // Small delay to allow CSS display:block to apply before animating opacity
             setTimeout(() => {
                 els.loginModal.classList.remove('opacity-0');
                 els.modalContent.classList.remove('scale-95');
@@ -619,55 +663,12 @@
             setTimeout(() => {
                 els.loginModal.classList.add('hidden');
                 document.getElementById('login-error').classList.add('hidden');
-            }, 300); // match transition duration
+            }, 300);
         }
 
         els.btnOpenLogin.addEventListener('click', openModal);
         document.getElementById('btn-close-modal').addEventListener('click', closeModal);
 
-        document.getElementById('btn-submit-login').addEventListener('click', () => {
-            const u = document.getElementById('username').value.trim();
-            const p = document.getElementById('password').value.trim();
-            
-            // Check provided custom credentials
-            const valid1 = (u === 'user1' && p === '1234');
-            const valid2 = (u === 'user2' && p === '5678');
-
-            if (valid1 || valid2) {
-                isAdmin = true;
-                document.body.classList.add('admin-mode');
-                closeModal();
-                
-                els.btnOpenLogin.classList.add('hidden');
-                els.btnLogout.classList.remove('hidden');
-                els.cmsPanel.classList.remove('hidden');
-                
-                // Clear fields
-                document.getElementById('username').value = '';
-                document.getElementById('password').value = '';
-                document.getElementById('login-error').classList.add('hidden');
-                
-                showToast(`Welcome back, ${u}. Admin privileges enabled.`, "success");
-                
-                // Auto switch to posts tab
-                document.querySelector('[data-tab="home"]').click();
-            } else {
-                document.getElementById('login-error').classList.remove('hidden');
-            }
-        });
-
-        els.btnLogout.addEventListener('click', () => {
-            isAdmin = false;
-            document.body.classList.remove('admin-mode');
-            resetCMSForm();
-            
-            els.btnOpenLogin.classList.remove('hidden');
-            els.btnLogout.classList.add('hidden');
-            els.cmsPanel.classList.add('hidden');
-            showToast("Logged out successfully.", "info");
-        });
-
-        // Social Sharing Links
         document.querySelectorAll('.social-btn').forEach(btn => {
             btn.addEventListener('click', (e) => {
                 const platform = e.currentTarget.getAttribute('data-share');
@@ -681,19 +682,15 @@
                     case 'linkedin': shareUrl = `https://www.linkedin.com/shareArticle?mini=true&url=${url}`; break;
                     case 'email': window.location.href = `mailto:?subject=${text}&body=${url}`; return;
                 }
-                
                 if (shareUrl) window.open(shareUrl, '_blank', 'width=600,height=400,scrollbars=no');
             });
         });
 
-        // Dummy Feedback Submission
         document.getElementById('feedback-form').addEventListener('submit', (e) => {
             e.preventDefault();
             const btn = document.getElementById('btn-submit-fb');
             btn.disabled = true;
             btn.innerHTML = '<i class="fas fa-circle-notch fa-spin mr-2"></i>Sending...';
-            
-            // Simulate network request
             setTimeout(() => {
                 showToast("Feedback sent directly to administration.", "success");
                 e.target.reset();
@@ -702,7 +699,7 @@
             }, 800);
         });
 
-        // Initialize database connection on load
+        // Initialize Firestore listening immediately
         setupRealtimeListener();
 
     </script>
