@@ -74,7 +74,7 @@
         .tab-content { display: none; }
         .tab-content.active { display: block; animation: fadeIn 0.4s ease-in-out; }
         
-        /* Admin Controls */
+        /* Admin Controls (Gated purely by CSS) */
         body:not(.admin-mode) .admin-actions { display: none !important; }
         body:not(.admin-mode) #cms-panel { display: none !important; }
         
@@ -132,10 +132,8 @@
                 </p>
             </div>
             <div class="md:w-2/5 relative z-10 flex justify-center md:justify-end">
-                <!-- Moderate sized historic library side image -->
                 <img src="https://images.unsplash.com/photo-1507842217343-583bb7270b66?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Historic Library" class="rounded-lg shadow-xl border-2 border-edu-gold/30 max-h-48 md:max-h-56 object-cover w-full max-w-md">
             </div>
-            <!-- Decorative element -->
             <div class="absolute right-0 top-0 w-48 h-48 bg-edu-crimson rounded-full mix-blend-multiply filter blur-3xl opacity-20 transform translate-x-1/3 -translate-y-1/3"></div>
         </div>
     </div>
@@ -189,7 +187,7 @@
             
             <div id="empty-state" class="hidden text-center py-16 bg-white rounded-lg border border-gray-200 border-dashed shadow-sm">
                 <i class="fas fa-book-open text-4xl text-gray-300 mb-3"></i>
-                <p class="text-gray-500 font-medium text-lg">No posts have been published yet.</p>
+                <p class="text-gray-500 font-medium text-lg" id="empty-state-message">No posts have been published yet.</p>
             </div>
         </div>
 
@@ -281,7 +279,7 @@
         import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, collection, addDoc, onSnapshot, serverTimestamp, doc, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        // Required Firebase configuration
+        // Provided specific Firebase configuration
         const firebaseConfig = {
             apiKey: "AIzaSyAYlaP5EXWeafNUAwR0icxQyWOHUFpHp_s",
             authDomain: "blog-posts-d4c89.firebaseapp.com",
@@ -309,6 +307,7 @@
             archiveContainer: document.getElementById('posts-container-archive'),
             loadingSpinner: document.getElementById('loading-spinner'),
             emptyState: document.getElementById('empty-state'),
+            emptyStateMsg: document.getElementById('empty-state-message'),
             cmsPanel: document.getElementById('cms-panel'),
             loginModal: document.getElementById('login-modal'),
             modalContent: document.getElementById('login-modal-content'),
@@ -369,50 +368,11 @@
             }
         });
 
-        document.getElementById('btn-submit-login').addEventListener('click', async () => {
-            // Using the full email directly as requested
-            const emailInput = document.getElementById('email').value.trim();
-            const passwordInput = document.getElementById('password').value.trim();
-            const btnText = document.getElementById('login-btn-text');
-            const errorDiv = document.getElementById('login-error');
-            
-            if (!emailInput || !passwordInput) {
-                errorDiv.classList.remove('hidden');
-                errorDiv.innerHTML = '<i class="fas fa-exclamation-circle"></i> Please fill in all fields.';
-                return;
-            }
-            
-            btnText.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i>';
-            errorDiv.classList.add('hidden');
-
-            try {
-                // SignIn strictly using Email and Password
-                await signInWithEmailAndPassword(auth, emailInput, passwordInput);
-                showToast("Logged in successfully.", "success");
-                document.getElementById('email').value = '';
-                document.getElementById('password').value = '';
-                document.querySelector('[data-tab="home"]').click(); 
-            } catch (error) {
-                console.error("Login Error:", error);
-                errorDiv.classList.remove('hidden');
-                errorDiv.innerHTML = '<i class="fas fa-exclamation-circle"></i> Invalid email or password.';
-            } finally {
-                btnText.textContent = 'Login to CMS';
-            }
-        });
-
-        els.btnLogout.addEventListener('click', async () => {
-            try {
-                await signOut(auth);
-                showToast("Logged out successfully.", "info");
-            } catch (err) {
-                console.error("Logout Error:", err);
-            }
-        });
-
         function setupRealtimeListener() {
             const postsRef = collection(db, 'posts');
             
+            // This runs immediately, completely uncoupled from the Auth state.
+            // If it fails for public users, it is a Firestore Security Rules issue.
             try {
                 unsubscribePosts = onSnapshot(postsRef, (snapshot) => {
                     els.loadingSpinner.classList.add('hidden');
@@ -421,6 +381,7 @@
                         els.recentContainer.innerHTML = '';
                         els.archiveSection.classList.add('hidden');
                         els.emptyState.classList.remove('hidden');
+                        els.emptyStateMsg.textContent = 'No posts have been published yet.';
                         return;
                     }
                     
@@ -429,10 +390,10 @@
                     let posts = [];
                     snapshot.forEach(doc => posts.push({ id: doc.id, ...doc.data() }));
                     
-                    // Sort descending
+                    // Sort descending by timestamp
                     posts.sort((a, b) => {
-                        const timeA = a.timestamp ? a.timestamp.toMillis() : 0;
-                        const timeB = b.timestamp ? b.timestamp.toMillis() : 0;
+                        const timeA = a.timestamp ? a.timestamp.toMillis() : Date.now();
+                        const timeB = b.timestamp ? b.timestamp.toMillis() : Date.now();
                         return timeB - timeA; 
                     });
 
@@ -441,8 +402,23 @@
                 }, (error) => {
                     console.error("Firestore Error:", error);
                     els.loadingSpinner.classList.add('hidden');
+                    els.recentContainer.innerHTML = '';
+                    els.archiveSection.classList.add('hidden');
                     els.emptyState.classList.remove('hidden');
-                    els.emptyState.innerHTML = '<i class="fas fa-exclamation-triangle text-4xl text-red-300 mb-3"></i><p class="text-red-500">Could not load posts. Database may be uninitialized.</p>';
+                    
+                    // Catch Permission Denied errors to instruct the user
+                    if (error.code === 'permission-denied') {
+                        els.emptyState.innerHTML = `
+                            <i class="fas fa-lock text-4xl text-red-300 mb-3"></i>
+                            <h3 class="text-xl font-bold text-gray-800 mb-2">Access Denied</h3>
+                            <p class="text-gray-500 font-medium text-sm max-w-md mx-auto">
+                                To make posts visible to logged-out users, update your Firestore Rules to: <br>
+                                <code class="bg-gray-100 text-red-500 px-2 py-1 rounded mt-2 block">allow read: if true;</code>
+                            </p>
+                        `;
+                    } else {
+                        els.emptyState.innerHTML = '<i class="fas fa-exclamation-triangle text-4xl text-red-300 mb-3"></i><p class="text-red-500">Could not load posts. Database may be uninitialized.</p>';
+                    }
                 });
             } catch (err) {
                 console.error("Setup error:", err);
@@ -454,22 +430,25 @@
             els.recentContainer.innerHTML = '';
             els.archiveContainer.innerHTML = '';
             
-            const now = new Date();
-            // Calculate 7 days ago timestamp
-            const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+            const now = Date.now();
+            const sevenDaysMs = 7 * 24 * 60 * 60 * 1000;
             
             const recentPosts = [];
             const archiveGroups = {}; 
             const archiveKeys = []; 
 
-            // Grouping logic based on 7-day rule
+            // Strict timestamp evaluation
             posts.forEach(post => {
-                const postDate = post.timestamp ? post.timestamp.toDate() : new Date();
+                // Fallback to now if timestamp hasn't synced from server yet
+                const postTimeMs = post.timestamp ? post.timestamp.toMillis() : now;
+                const postDateObj = new Date(postTimeMs);
                 
-                if (postDate >= sevenDaysAgo) {
+                // If the post is less than 7 days old
+                if ((now - postTimeMs) < sevenDaysMs) {
                     recentPosts.push(post);
                 } else {
-                    const monthYear = postDate.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+                    // Group by Month Year
+                    const monthYear = postDateObj.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
                     if (!archiveGroups[monthYear]) {
                         archiveGroups[monthYear] = [];
                         archiveKeys.push(monthYear);
@@ -503,7 +482,7 @@
 
                 html += `<div class="post-text text-gray-700 leading-relaxed clamp-text">${formattedContent}</div>`;
                 
-                // Admin Actions
+                // Admin Actions - CSS handles hiding these for non-admins
                 html += `
                     <div class="admin-actions mt-5 pt-4 border-t border-gray-100 flex gap-3 justify-end">
                         <button class="btn-edit text-sm text-blue-600 hover:text-blue-800 font-medium px-3 py-1.5 rounded border border-blue-200 hover:bg-blue-50 transition flex items-center" data-id="${post.id}"><i class="fas fa-edit mr-2"></i> Edit</button>
@@ -560,19 +539,56 @@
             }
         }
 
+        document.getElementById('btn-submit-login').addEventListener('click', async () => {
+            const emailInput = document.getElementById('email').value.trim();
+            const passwordInput = document.getElementById('password').value.trim();
+            const btnText = document.getElementById('login-btn-text');
+            const errorDiv = document.getElementById('login-error');
+            
+            if (!emailInput || !passwordInput) {
+                errorDiv.classList.remove('hidden');
+                errorDiv.innerHTML = '<i class="fas fa-exclamation-circle"></i> Please fill in all fields.';
+                return;
+            }
+            
+            btnText.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i>';
+            errorDiv.classList.add('hidden');
+
+            try {
+                await signInWithEmailAndPassword(auth, emailInput, passwordInput);
+                showToast("Logged in successfully.", "success");
+                document.getElementById('email').value = '';
+                document.getElementById('password').value = '';
+                document.querySelector('[data-tab="home"]').click(); 
+            } catch (error) {
+                console.error("Login Error:", error);
+                errorDiv.classList.remove('hidden');
+                errorDiv.innerHTML = '<i class="fas fa-exclamation-circle"></i> Invalid email or password.';
+            } finally {
+                btnText.textContent = 'Login to CMS';
+            }
+        });
+
+        els.btnLogout.addEventListener('click', async () => {
+            try {
+                await signOut(auth);
+                showToast("Logged out successfully.", "info");
+            } catch (err) {
+                console.error("Logout Error:", err);
+            }
+        });
+
         const handlePostAction = (e) => {
             if (!isAdmin) return;
             
             const editBtn = e.target.closest('.btn-edit');
             const delBtn = e.target.closest('.btn-delete');
             
-            // Delete Action uses custom modal instead of native confirm()
             if (delBtn) {
                 postToDeleteId = delBtn.getAttribute('data-id');
                 openModal(els.deleteModal, els.deleteModalContent);
             }
             
-            // Edit Action
             if (editBtn) {
                 const id = editBtn.getAttribute('data-id');
                 const post = currentPosts.find(p => p.id === id);
@@ -588,11 +604,9 @@
             }
         };
 
-        // Attach listeners using event delegation
         els.recentContainer.addEventListener('click', handlePostAction);
         els.archiveContainer.addEventListener('click', handlePostAction);
 
-        // Confirm Delete logic
         document.getElementById('btn-cancel-delete').addEventListener('click', () => {
             closeModal(els.deleteModal, els.deleteModalContent);
             postToDeleteId = null;
@@ -651,10 +665,9 @@
             
             try {
                 let imageBase64 = null;
-                // Convert image to Base64 to store directly in document
                 if (fileInput.files && fileInput.files[0]) {
                     const file = fileInput.files[0];
-                    if (file.size > 1048576) { // 1MB limit for Firestore doc size safety
+                    if (file.size > 1048576) { 
                         throw new Error("Image too large. Limit is 1MB.");
                     }
                     imageBase64 = await toBase64(file);
@@ -667,7 +680,7 @@
                     await updateDoc(doc(db, 'posts', editingPostId), postData);
                     showToast("Post updated successfully!", "success");
                 } else {
-                    postData.timestamp = serverTimestamp(); // Assign server time on creation
+                    postData.timestamp = serverTimestamp(); 
                     await addDoc(collection(db, 'posts'), postData);
                     showToast("Post published successfully!", "success");
                 }
@@ -692,7 +705,6 @@
             });
         });
 
-        // Generic Modal logic
         function openModal(modalEl, contentEl) {
             modalEl.classList.remove('hidden');
             setTimeout(() => {
@@ -714,7 +726,6 @@
         els.btnOpenLogin.addEventListener('click', () => openModal(els.loginModal, els.modalContent));
         document.getElementById('btn-close-modal').addEventListener('click', () => closeModal(els.loginModal, els.modalContent));
 
-        // Social sharing mock implementation
         document.querySelectorAll('.social-btn').forEach(btn => {
             btn.addEventListener('click', (e) => {
                 const platform = e.currentTarget.getAttribute('data-share');
@@ -732,7 +743,6 @@
             });
         });
 
-        // Mock Feedback form
         document.getElementById('feedback-form').addEventListener('submit', (e) => {
             e.preventDefault();
             const btn = document.getElementById('btn-submit-fb');
@@ -746,7 +756,7 @@
             }, 800);
         });
 
-        // Boot up
+        // Initialize immediately outside of auth checks so visitors see data
         setupRealtimeListener();
 
     </script>
